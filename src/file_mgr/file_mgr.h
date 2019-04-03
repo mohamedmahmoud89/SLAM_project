@@ -1,47 +1,57 @@
 #include<vector>
 #include<string>
-#include<iostream>
+//#include<iostream>
+#include<fstream>
 #include "common.h"
 using namespace std;
 
-//design is not good. why do we need class hirarchy here?
-//isn't MotorFileMgr class (and other classes for scans and so on) enough?
-
-/*class GenFileMgr{
+template<typename T>
+class ReadFileMgr{
 public:
-	virtual void read(const string& filename)=0;
-	virtual vector<tick> get_ticks() const=0;
-	virtual ~GenFileMgr(){}
-};*/
-
+	ReadFileMgr()=default;
+	ReadFileMgr(const ReadFileMgr& rhs)=delete;
+	ReadFileMgr& operator=(const ReadFileMgr& rhs)=delete;
+	virtual void read(const string& filename);
+	virtual vector<T> get_data() const noexcept;
+	virtual ~ReadFileMgr(){}
+protected:
+	virtual void read_line(const string& line)=0;
+	vector<T> data;
+};
 
 // in case of running on mutli threaded system
 // a mutex needs to be added to the class definition for locking
 // the file
 // singleton design ppattern is good in case only one file in the
 // system which is the case for "robot_motor.txt"
-class MotorFileMgr{
-private:
+class MotorFileMgr :public ReadFileMgr<tick>{
 	MotorFileMgr():is_first_tick(true),last_tick(tick(0,0)){};
-
 public:
-	MotorFileMgr(const MotorFileMgr& rhs)=delete;
-	MotorFileMgr& operator=(const MotorFileMgr& rhs)=delete;
-	void read(const string& filename);
-	vector<tick> get_ticks() const noexcept;
-	~MotorFileMgr(){}
 	static MotorFileMgr* get_instance() noexcept;
 private:
-	void read_line(const string& line);
-	vector<tick> ticks;
+	void read_line(const string& line) override;
 	tick last_tick;
 	bool is_first_tick{true};
 };
 
-class PosFileMgr{
+class ScanFileMgr : public ReadFileMgr<vector<u16>>{
+	ScanFileMgr()=default;
 public:
-	void add_pos(const pose& pos);
-	void write(const string& filename) const;
+	static ScanFileMgr* get_instance() noexcept;
 private:
-	vector<pose> poses;
+	void read_line(const string& line) override;
+};
+
+template<typename T>
+class WriteFileMgr{
+public:
+	virtual void add_sample(const T& sample);
+	virtual void write(const string& filename) const;
+protected:
+	virtual void write_line(ofstream& ofs,const T& sample)const=0;
+	vector<T>data;
+};
+
+class PosFileMgr : public WriteFileMgr<pose>{
+	void write_line(ofstream& ofs,const pose& pos) const override;
 };

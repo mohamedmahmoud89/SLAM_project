@@ -15,10 +15,10 @@ int main(){
 		make_unique<robot_config>(150.0,30.0,0.349);
 
 	pmfm->read("../data/robot4_motors.txt");
-        vector<tick> v(pmfm->get_ticks());
+        vector<tick> v(pmfm->get_data());
 	for(auto&tick:v){
 		odo->UpdatePos(tick,*cfg);
-		pfm->add_pos(odo->get_pos());
+		pfm->add_sample(odo->get_pos());
 	}
 		
 	pfm->write("../data/poses_from_ticks.txt");

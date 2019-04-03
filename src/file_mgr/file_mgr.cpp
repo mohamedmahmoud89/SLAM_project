@@ -1,5 +1,5 @@
 #include"file_mgr.h"
-#include<fstream>
+//#include<fstream>
 #include<sstream>
 //#include<algorithm>
 //#include<iostream>
@@ -7,8 +7,25 @@
 #include"file_open.h"
 using namespace std;
 
-// Motor
+// general Read 
+template<typename T>void ReadFileMgr<T>::read(const string& fn){
+        ifstream file;
+        string line;
+        {
+                file_open fl(&file,fn);
+                // needs lock in case of running async
+                if(file.is_open())
+                        while(getline(file,line)){
+                                read_line(line);
+                        }
+        }
+}
 
+template<typename T>vector<T> ReadFileMgr<T>::get_data() const noexcept{
+        return data;
+}
+
+// Motor
 void MotorFileMgr::read_line(const string& line){
 	stringstream ss(line);
         string left,right;
@@ -25,26 +42,8 @@ void MotorFileMgr::read_line(const string& line){
 	tick temp(
 			current.left()-last_tick.left(),
 			current.right()-last_tick.right());
-	ticks.push_back(temp);
-	//cout<<temp.left()<<" "<<temp.right()<<endl;
+	data.push_back(temp);
 	last_tick=current;
-}
-
-void MotorFileMgr::read(const string& fn){
-	ifstream file;
-	string line;
-	{
-		file_open fl(&file,fn);
-		// needs lock in case of running async
-		if(file.is_open())
-			while(getline(file,line)){
-				read_line(line);
-			}
-	}
-}
-
-vector<tick> MotorFileMgr::get_ticks() const noexcept{
-	return ticks;
 }
 
 MotorFileMgr* MotorFileMgr::get_instance() noexcept{
@@ -52,22 +51,39 @@ MotorFileMgr* MotorFileMgr::get_instance() noexcept{
 	return &g_mfm;
 }
 
-// Pose
-void PosFileMgr::add_pos(const pose& pos){
-	poses.push_back(pos);
+//Scan
+void ScanFileMgr::read_line(const string& line){
+
 }
 
-void PosFileMgr::write(const string& filename) const{
+ScanFileMgr* ScanFileMgr::get_instance() noexcept{
+        static ScanFileMgr g_sfm;
+        return &g_sfm;
+}
+
+// general Write
+template<typename T>void WriteFileMgr<T>::add_sample(const T& sample){
+	data.push_back(sample);
+}
+
+template<typename T>void WriteFileMgr<T>::write(
+		const string& filename) const
+{
 	ofstream fs;
 	{
 		file_open fo(&fs,filename);
 		if(fs.is_open()){
-			for(const pose&p:poses){
-				fs<<"F"<<" ";
-				fs<<p.get_x()<<" ";
-				fs<<p.get_y()<<" ";
-				fs<<p.get_yaw()<<endl;
+			for(const T& sample:data){
+				write_line(fs,sample);
 			}
 		}
 	}
+}
+
+// Pos
+void PosFileMgr::write_line(ofstream& ofs,const pose& pos) const{
+	ofs<<"F"<<" ";
+        ofs<<pos.get_x()<<" ";
+        ofs<<pos.get_y()<<" ";
+        ofs<<pos.get_yaw()<<endl;
 }
