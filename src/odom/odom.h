@@ -3,17 +3,17 @@
 using namespace std;
 
 class odom{
-	unique_ptr<pose>p_pos;
+	unique_ptr<Pose>p_pos;
 public:
 	odom():
-		p_pos(make_unique<pose>()){}
-	odom(const pose& p):
-		p_pos(make_unique<pose>(p)){}
-	void UpdatePos(const tick& t,const robot_config& cfg);
-	const pose get_pos() const noexcept{
+		p_pos(make_unique<Pose>()){}
+	odom(const Pose& p):
+		p_pos(make_unique<Pose>(p)){}
+	void UpdatePos(const Tick& t,const robot_config& cfg);
+	const Pose get_pos() const noexcept{
 		return *p_pos;	
 	}
 private:
-	void UpdateS(const tick& t,const robot_config& cfg);
-	void UpdateC(const tick& t,const robot_config& cfg);
+	void UpdateS(const Tick& t,const robot_config& cfg);
+	void UpdateC(const Tick& t,const robot_config& cfg);
 };

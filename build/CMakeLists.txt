@@ -5,10 +5,12 @@ include_directories(
 	../src/file_mgr
 	../src/raii
 	../src/common
-	../src/odom	
+	../src/odom
+	../src/lfx	
 )
 add_executable(SLAM 
 	../src/file_mgr/file_mgr.cpp 
 	../src/main/main.cpp
 	../src/odom/odom.cpp
+	../src/lfx/lfx.cpp
 )

@@ -28,22 +28,22 @@ template<typename T>vector<T> ReadFileMgr<T>::get_data() const noexcept{
 // Motor
 void MotorFileMgr::read_line(const string& line){
 	stringstream ss(line);
-        string left,right;
+        string Left,Right;
         for(int i=0;i<3;++i)
-             ss>>left;
+             ss>>Left;
         for(int i=0;i<4;++i)
-             ss>>right;
-	tick current(stoul(left),stoul(right));
-        if(is_first_tick){
-		is_first_tick=false;
-		last_tick=current;
+             ss>>Right;
+	Tick current(stoul(Left),stoul(Right));
+        if(is_first_Tick){
+		is_first_Tick=false;
+		last_Tick=current;
 		return;
 	}
-	tick temp(
-			current.left()-last_tick.left(),
-			current.right()-last_tick.right());
+	Tick temp(
+			current.Left()-last_Tick.Left(),
+			current.Right()-last_Tick.Right());
 	data.push_back(temp);
-	last_tick=current;
+	last_Tick=current;
 }
 
 MotorFileMgr* MotorFileMgr::get_instance() noexcept{
@@ -81,9 +81,9 @@ template<typename T>void WriteFileMgr<T>::write(
 }
 
 // Pos
-void PosFileMgr::write_line(ofstream& ofs,const pose& pos) const{
+void PosFileMgr::write_line(ofstream& ofs,const Pose& pos) const{
 	ofs<<"F"<<" ";
-        ofs<<pos.get_x()<<" ";
-        ofs<<pos.get_y()<<" ";
-        ofs<<pos.get_yaw()<<endl;
+        ofs<<pos.X()<<" ";
+        ofs<<pos.Y()<<" ";
+        ofs<<pos.Yaw()<<endl;
 }

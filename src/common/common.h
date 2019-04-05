@@ -2,73 +2,85 @@
 #define COMMON_H
 using namespace std;
 
-using u8=unsigned short;
-using u16=unsigned int;
+using u8=unsigned char;
+using u16=unsigned short;
 using u32=unsigned long;
-using si8=short;
-using si16=int;
+using si8=char;
+using si16=short;
 using si32=long;
+using f32=float;
+using f64=double;
 // use the default copy/move Ctors
-class tick{ 
+class Tick{ 
         u32 l{0};
         u32 r{0};
 public:
-        tick(const u32 in_l,const u32 in_r):l(in_l),r(in_r){}
-        u32 left() const
+        Tick(const u32 in_l,const u32 in_r):l(in_l),r(in_r){}
+        u32 Left() const
         {
                 return l;
         }
-        u32 right() const
+        u32 Right() const
         {
                 return r;
         }
 };
 
-class pose{
-	float x{0.0};
-	float y{0.0};
-	float yaw{0.0};
+class Pose{
+	f32 x{0.0};
+	f32 y{0.0};
+	f32 yaw{0.0};
 public:
-	pose():x(0.0),y(0.0),yaw(0.0){}
-	pose(float in_x,float in_y,float in_yaw):
+	Pose():x(0.0),y(0.0),yaw(0.0){}
+	Pose(f32 in_x,f32 in_y,f32 in_yaw):
 		x(in_x),y(in_y),yaw(in_yaw){}
-	float get_x() const noexcept{
+	f32 X() const noexcept{
 		return x;
 	}
-	void set_x(const float& in) noexcept{
+	void set_x(const f32& in) noexcept{
 		x=in;
 	}
-	void set_y(const float& in) noexcept{
+	void set_y(const f32& in) noexcept{
 		y=in;
 	}
-	void set_yaw(const float& in) noexcept{
+	void set_yaw(const f32& in) noexcept{
 		yaw=in;
 	}
-	float get_y() const noexcept{
+	f32 Y() const noexcept{
 		return y;
 	}
-	float get_yaw() const noexcept{
+	f32 Yaw() const noexcept{
 		return yaw;
 	}
 };
 
+class Feature{
+	f32 x{0};
+	f32 y{0};
+public:
+	Feature():x(0),y(0){}
+	Feature(const f32 x_mm,const f32 y_mm):x(x_mm),y(y_mm){}
+	f32 X(){return x;}
+	f32 Y(){return y;}
+};
+
 class robot_config{
-	float width_mm{0.0};
-	float sensor_offset_mm{0.0};
-	float ticks_to_mm{0.0};
+	f32 width_mm{0.0};
+	f32 sensor_offset_mm{0.0};
+	f32 Ticks_to_mm{0.0};
 public:
 	robot_config():
-		width_mm(0.0),sensor_offset_mm(0.0),ticks_to_mm(0.0){}
-	robot_config(const float& w,const float& o,const float& t):
-		width_mm(w),sensor_offset_mm(o),ticks_to_mm(t){}
-	float get_width() const noexcept{
+		width_mm(0.0),sensor_offset_mm(0.0),Ticks_to_mm(0.0){}
+	robot_config(const f32& w,const f32& o,const f32& t):
+		width_mm(w),sensor_offset_mm(o),Ticks_to_mm(t){}
+	f32 get_width() const noexcept{
 		return width_mm;
 	}
-	float get_offset() const noexcept{
+	f32 get_offset() const noexcept{
 		return sensor_offset_mm;
 	}
-	float get_ticks_to_mm() const noexcept{
-		return ticks_to_mm;
+	f32 get_Ticks_to_mm() const noexcept{
+		return Ticks_to_mm;
 	}
 };
 #endif
