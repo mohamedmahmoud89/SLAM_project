@@ -9,6 +9,10 @@ public:
 		p_pos(make_unique<Pose>()){}
 	odom(const Pose& p):
 		p_pos(make_unique<Pose>(p)){}
+	odom(const odom& rhs)=delete;
+	odom& operator=(const odom& rhs)=delete;
+	odom(odom&& rhs)=delete;
+	odom& operator=(odom&& rhs)=delete;
 	void UpdatePos(const Tick& t,const robot_config& cfg);
 	const Pose get_pos() const noexcept{
 		return *p_pos;	
