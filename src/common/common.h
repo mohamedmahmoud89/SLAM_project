@@ -60,27 +60,7 @@ class Feature{
 public:
 	Feature():x(0),y(0){}
 	Feature(const f32 x_mm,const f32 y_mm):x(x_mm),y(y_mm){}
-	f32 X(){return x;}
-	f32 Y(){return y;}
-};
-
-class robot_config{
-	f32 width_mm{0.0};
-	f32 sensor_offset_mm{0.0};
-	f32 Ticks_to_mm{0.0};
-public:
-	robot_config():
-		width_mm(0.0),sensor_offset_mm(0.0),Ticks_to_mm(0.0){}
-	robot_config(const f32& w,const f32& o,const f32& t):
-		width_mm(w),sensor_offset_mm(o),Ticks_to_mm(t){}
-	f32 get_width() const noexcept{
-		return width_mm;
-	}
-	f32 get_offset() const noexcept{
-		return sensor_offset_mm;
-	}
-	f32 get_Ticks_to_mm() const noexcept{
-		return Ticks_to_mm;
-	}
+	f32 X() const{return x;}
+	f32 Y() const{return y;}
 };
 #endif

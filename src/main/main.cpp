@@ -8,11 +8,11 @@ using namespace std;
 
 int main(){
 	MotorFileMgr* pmfm=MotorFileMgr::get_instance();
-        unique_ptr<odom>odo=make_unique<odom>(
+        unique_ptr<Odom>odo=make_unique<Odom>(
 			Pose(1850.0,1897.0,(213.0/180)*M_PI));
 	unique_ptr<PosFileMgr> pfm=make_unique<PosFileMgr>();
-	unique_ptr<robot_config> cfg=
-		make_unique<robot_config>(150.0,30.0,0.349);
+	unique_ptr<OdomConfig> cfg=
+		make_unique<OdomConfig>(150.0,30.0,0.349);
 
 	pmfm->read("../data/robot4_motors.txt");
         vector<Tick> v(pmfm->get_data());

@@ -87,3 +87,13 @@ void PosFileMgr::write_line(ofstream& ofs,const Pose& pos) const{
         ofs<<pos.Y()<<" ";
         ofs<<pos.Yaw()<<endl;
 }
+
+// Feature
+void FeatFileMgr::write_line(
+		ofstream& ofs,
+		const Feature& feat) const{
+	
+	ofs<<"D C ";
+	ofs<<feat.X()<<" ";
+	ofs<<feat.Y()<<" "<<endl;
+}
