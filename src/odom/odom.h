@@ -1,5 +1,5 @@
 #include"common.h"
-#include"odom_cfg.h"
+#include"robot_cfg.h"
 #include<memory>
 using namespace std;
 
@@ -14,11 +14,11 @@ public:
 	Odom& operator=(const Odom& rhs)=delete;
 	Odom(Odom&& rhs)=delete;
 	Odom& operator=(Odom&& rhs)=delete;
-	void UpdatePos(const Tick& t,const OdomConfig& cfg);
+	void UpdatePos(const Tick& t,const RobotConfig& cfg);
 	const Pose get_pos() const noexcept{
 		return *p_pos;	
 	}
 private:
-	void UpdateS(const Tick& t,const OdomConfig& cfg);
-	void UpdateC(const Tick& t,const OdomConfig& cfg);
+	void UpdateS(const Tick& t,const RobotConfig& cfg);
+	void UpdateC(const Tick& t,const RobotConfig& cfg);
 };

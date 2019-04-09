@@ -2,7 +2,7 @@
 #include<cmath>
 //#include<iostream>
 using namespace std;
-void Odom::UpdateS(const Tick& t,const OdomConfig& cfg){
+void Odom::UpdateS(const Tick& t,const RobotConfig& cfg){
 	f32 dist(t.Right()*cfg.Ticks_ToMm());
 	f32 x(p_pos->X());
 	f32 y(p_pos->Y());
@@ -11,7 +11,7 @@ void Odom::UpdateS(const Tick& t,const OdomConfig& cfg){
 	p_pos->set_y(y+(dist*sin(yaw)));
 }
 
-void Odom::UpdateC(const Tick& t,const OdomConfig& cfg){
+void Odom::UpdateC(const Tick& t,const RobotConfig& cfg){
 	f32 t2mm(cfg.Ticks_ToMm());
 	f32 dist_r(t.Right()*t2mm);
 	f32 dist_l(t.Left() *t2mm);
@@ -38,7 +38,7 @@ void Odom::UpdateC(const Tick& t,const OdomConfig& cfg){
 	p_pos->set_y(c_y+(offset*sin(yaw)));
 }
 
-void Odom::UpdatePos(const Tick& t,const OdomConfig& cfg){
+void Odom::UpdatePos(const Tick& t,const RobotConfig& cfg){
 	if(t.Right()==t.Left()){
 		UpdateS(t,cfg);
 		return;

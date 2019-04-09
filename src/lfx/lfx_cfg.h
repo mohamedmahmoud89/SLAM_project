@@ -3,15 +3,19 @@
 class ScanConfig{
 public:
 	ScanConfig():
-		min_scan_dist(0),
-		depth_jump(0),
-		feat_offset(0){}
+		min_valid_depth(0),
+		min_delta_depth(0),
+		feat_center_offset(0){}
 	ScanConfig(const u8 dist,const u8 jump,const u8 offset):
-		min_scan_dist(dist),
-		depth_jump(jump),
-		feat_offset(offset){}
-
-	u8 min_scan_dist{0};
-	u8 depth_jump{0};
-	u8 feat_offset{0};
+		min_valid_depth(dist),
+		min_delta_depth(jump),
+		feat_center_offset(offset){}
+	u8 Min_ValidDepth() const noexcept{return min_valid_depth;}
+	u8 Min_DelteDepth() const noexcept{return min_delta_depth;}
+	u8 Feat_Offset() const noexcept{return feat_center_offset;}
+private:
+	u8 min_valid_depth{0}; // min valid depth info
+	u8 min_delta_depth{0}; // min delta depth to consider a feat.
+	// offset between the feat surface and the feat center
+	u8 feat_center_offset{0};
 };

@@ -5,11 +5,13 @@ include_directories(
 	../src/supp/file_mgr
 	../src/supp/raii
 	../src/supp/common
+	../src/supp/robot_cfg
 	../src/odom
 	../src/lfx	
 )
 add_executable(SLAM 
 	../src/supp/file_mgr/file_mgr.cpp 
+	../src/supp/robot_cfg/robot_cfg.cpp
 	../src/main/main.cpp
 	../src/odom/odom.cpp
 	../src/lfx/lfx.cpp

@@ -11,8 +11,8 @@ int main(){
         unique_ptr<Odom>odo=make_unique<Odom>(
 			Pose(1850.0,1897.0,(213.0/180)*M_PI));
 	unique_ptr<PosFileMgr> pfm=make_unique<PosFileMgr>();
-	unique_ptr<OdomConfig> cfg=
-		make_unique<OdomConfig>(150.0,30.0,0.349);
+	unique_ptr<RobotConfig> cfg=
+		make_unique<RobotConfig>(150.0,30.0,0.349);
 
 	pmfm->read("../data/robot4_motors.txt");
         vector<Tick> v(pmfm->get_data());
