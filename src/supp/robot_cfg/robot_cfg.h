@@ -6,6 +6,8 @@ class RobotConfig{
         f32 width_mm{0.0};
         f32 sensor_offset_mm{0.0};
         f32 ticks_to_mm{0.0};
+	static const f32 mount_angle;
+	static const f32 offset; 
 public:
         RobotConfig():
                 width_mm(0.0),sensor_offset_mm(0.0),ticks_to_mm(0.0){}
@@ -20,5 +22,5 @@ public:
         f32 Ticks_ToMm() const noexcept{
                 return ticks_to_mm;
         }
-	f32 Ray_IdxToAng(const u16 idx) const;
+	static f32 Ray_IdxToAng(const u16 idx);
 };
