@@ -56,8 +56,8 @@ class PosFileMgr : public WriteFileMgr<Pose>{
 	void write_line(ofstream& ofs,const Pose& pos) const override;
 };
 
-class FeatFileMgr :public WriteFileMgr<Feature>{
+class FeatFileMgr :public WriteFileMgr<vector<Feature>>{
 	void write_line(
 		ofstream& ofs,
-		const Feature& feat) const override;
+		const vector<Feature>& feat) const override;
 };

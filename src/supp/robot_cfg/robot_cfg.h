@@ -22,5 +22,5 @@ public:
         f32 Ticks_ToMm() const noexcept{
                 return ticks_to_mm;
         }
-	static f32 Ray_IdxToAng(const u16 idx);
+	static f32 Ray_IdxToAng(const f32 idx);
 };

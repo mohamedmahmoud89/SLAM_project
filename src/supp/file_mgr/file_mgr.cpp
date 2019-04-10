@@ -53,7 +53,18 @@ MotorFileMgr* MotorFileMgr::get_instance() noexcept{
 
 //Scan
 void ScanFileMgr::read_line(const string& line){
-
+	stringstream ss(line);
+	string temp;
+	ss>>temp; // S
+	ss>>temp; // timestamp
+	ss>>temp; // count
+	u16 count(stoi(temp));
+	vector<u16>scan;
+	for(u16 i=0;i<count;++i){
+		ss>>temp;
+		scan.push_back(stoi(temp));
+	}
+	data.push_back(scan);
 }
 
 ScanFileMgr* ScanFileMgr::get_instance() noexcept{
@@ -91,9 +102,12 @@ void PosFileMgr::write_line(ofstream& ofs,const Pose& pos) const{
 // Feature
 void FeatFileMgr::write_line(
 		ofstream& ofs,
-		const Feature& feat) const{
+		const vector<Feature>& feat) const{
 	
 	ofs<<"D C ";
-	ofs<<feat.X()<<" ";
-	ofs<<feat.Y()<<" "<<endl;
+	for(auto&i:feat){
+		ofs<<i.X()<<" ";
+		ofs<<i.Y()<<" ";
+	}
+	ofs<<endl;
 }

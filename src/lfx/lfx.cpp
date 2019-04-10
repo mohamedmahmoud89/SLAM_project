@@ -4,10 +4,10 @@
 
 using namespace std;
 
-vector<u16> LidarFeatEx::derive_scan(
+vector<si16> LidarFeatEx::derive_scan(
 		const vector<u16>& scan,
 		const ScanConfig& cfg){
-	vector<u16>ret(1,0);
+	vector<si16>ret(1,0);
 	for(size_t i=1;i<scan.size()-1;++i){
 		if(scan[i-1]>cfg.Min_ValidDepth()&&
 		   scan[i+1]>cfg.Min_ValidDepth()){
@@ -16,11 +16,12 @@ vector<u16> LidarFeatEx::derive_scan(
 		}
 		ret.push_back(0);
 	}
+	return ret;
 }
 
 vector<Feature> LidarFeatEx::find_features(
 		const vector<u16>& scan,
-		const vector<u16>& derivative,
+		const vector<si16>& derivative,
 		const ScanConfig& cfg){
 	vector<Feature>ret;
 	bool is_feat_scanned(false);
@@ -39,8 +40,8 @@ vector<Feature> LidarFeatEx::find_features(
 			f32 avg_r(sum_rays/num_rays);
 			f32 avg_d(sum_depths/num_rays);
 			f32 theta(RobotConfig::Ray_IdxToAng(avg_r));
-			f32 x(avg_d+cfg.Feat_Offset()*cos(theta));
-			f32 y(avg_d+cfg.Feat_Offset()*sin(theta));
+			f32 x((avg_d+cfg.Feat_Offset())*cos(theta));
+			f32 y((avg_d+cfg.Feat_Offset())*sin(theta));
 			ret.push_back(Feature(x,y));
 		}
 		else if(is_feat_scanned&&
@@ -57,6 +58,6 @@ vector<Feature> LidarFeatEx::find_features(
 vector<Feature> LidarFeatEx::Feature_Extract(
 		const vector<u16>& scan,
 		const ScanConfig& cfg){
-	vector<u16>derived_scan(derive_scan(scan,cfg));
+	vector<si16>derived_scan(derive_scan(scan,cfg));
 	return find_features(scan,derived_scan,cfg);
 }
