@@ -2,8 +2,8 @@
 #include<cmath>
 //#include<iostream>
 using namespace std;
-void Odom::UpdateS(const Tick& t,const RobotConfig& cfg){
-	f32 dist(t.Right()*cfg.Ticks_ToMm());
+void Odom::UpdateS(const ControlBase& t,const RobotConfig& cfg){
+	f32 dist(t.Right_Tick()*cfg.Ticks_ToMm());
 	f32 x(p_pos->X());
 	f32 y(p_pos->Y());
 	f32 yaw(p_pos->Yaw());
@@ -11,10 +11,10 @@ void Odom::UpdateS(const Tick& t,const RobotConfig& cfg){
 	p_pos->set_y(y+(dist*sin(yaw)));
 }
 
-void Odom::UpdateC(const Tick& t,const RobotConfig& cfg){
+void Odom::UpdateC(const ControlBase& t,const RobotConfig& cfg){
 	f32 t2mm(cfg.Ticks_ToMm());
-	f32 dist_r(t.Right()*t2mm);
-	f32 dist_l(t.Left() *t2mm);
+	f32 dist_r(t.Right_Tick()*t2mm);
+	f32 dist_l(t.Left_Tick() *t2mm);
         f32 width(cfg.Width());
 	f32 offset(cfg.Sensor_Offset());
 	f32 x(p_pos->X());
@@ -38,10 +38,10 @@ void Odom::UpdateC(const Tick& t,const RobotConfig& cfg){
 	p_pos->set_y(c_y+(offset*sin(yaw)));
 }
 
-void Odom::UpdatePos(const Tick& t,const RobotConfig& cfg){
-	if(t.Right()==t.Left()){
-		UpdateS(t,cfg);
+void Odom::UpdatePos(const ControlBase& c,const Config& cfg){
+	if(c.Right_Tick()==c.Left_Tick()){
+		UpdateS(c,dynamic_cast<const RobotConfig&>(cfg));
 		return;
 	}
-	UpdateC(t,cfg);
+	UpdateC(c,dynamic_cast<const RobotConfig&>(cfg));
 } 

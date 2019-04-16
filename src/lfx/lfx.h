@@ -8,12 +8,12 @@ class LidarFeatEx{
 	vector<si16> derive_scan(
 			const vector<u16>& scan,
 			const ScanConfig& cfg);
-	vector<Feature> find_features(
+	vector<FeatBase> find_features(
 			const vector<u16>& scan,
 			const vector<si16>& derivative,
 			const ScanConfig& cfg);
 public:
-	vector<Feature> Feature_Extract(
-			const vector<u16>&scan,
-			const ScanConfig& cfg);
+	vector<FeatBase> Feature_Extract(
+			const Scan::ScanBase<u16>& scan,
+			const Scan::Config& cfg);
 };

@@ -1,6 +1,6 @@
 #include "common.h"
-
-class ScanConfig{
+#include "scan.h"
+class ScanConfig : public Scan::Config{
 public:
 	ScanConfig():
 		min_valid_depth(0),
@@ -10,7 +10,10 @@ public:
 		min_valid_depth(dist),
 		min_delta_depth(jump),
 		feat_center_offset(offset){}
-	u8 Min_ValidDepth() const noexcept{return min_valid_depth;}
+	u8 Min_ValidDepth() const noexcept override
+	{
+		return min_valid_depth;
+	}
 	u8 Min_DeltaDepth() const noexcept{return min_delta_depth;}
 	u8 Feat_Offset() const noexcept{return feat_center_offset;}
 private:

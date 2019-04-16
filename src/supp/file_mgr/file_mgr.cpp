@@ -33,15 +33,15 @@ void MotorFileMgr::read_line(const string& line){
              ss>>Left;
         for(int i=0;i<4;++i)
              ss>>Right;
-	Tick current(stoul(Left),stoul(Right));
+	ControlBase current(stoul(Left),stoul(Right));
         if(is_first_Tick){
 		is_first_Tick=false;
 		last_Tick=current;
 		return;
 	}
-	Tick temp(
-			current.Left()-last_Tick.Left(),
-			current.Right()-last_Tick.Right());
+	ControlBase temp(
+			current.Left_Tick()-last_Tick.Left_Tick(),
+			current.Right_Tick()-last_Tick.Right_Tick());
 	data.push_back(temp);
 	last_Tick=current;
 }
@@ -92,7 +92,7 @@ template<typename T>void WriteFileMgr<T>::write(
 }
 
 // Pos
-void PosFileMgr::write_line(ofstream& ofs,const Pose& pos) const{
+void PosFileMgr::write_line(ofstream& ofs,const PoseBase& pos) const{
 	ofs<<"F"<<" ";
         ofs<<pos.X()<<" ";
         ofs<<pos.Y()<<" ";
@@ -102,7 +102,7 @@ void PosFileMgr::write_line(ofstream& ofs,const Pose& pos) const{
 // Feature
 void FeatFileMgr::write_line(
 		ofstream& ofs,
-		const vector<Feature>& feat) const{
+		const vector<FeatBase>& feat) const{
 	
 	ofs<<"D C ";
 	for(auto&i:feat){

@@ -24,13 +24,15 @@ protected:
 // the file
 // singleton design ppattern is good in case only one file in the
 // system which is the case for "robot_motor.txt"
-class MotorFileMgr :public ReadFileMgr<Tick>{
-	MotorFileMgr():is_first_Tick(true),last_Tick(Tick(0,0)){};
+class MotorFileMgr :public ReadFileMgr<ControlBase>{
+	MotorFileMgr():
+		is_first_Tick(true),
+		last_Tick(ControlBase(0,0)){};
 public:
 	static MotorFileMgr* get_instance() noexcept;
 private:
 	void read_line(const string& line) override;
-	Tick last_Tick;
+	ControlBase last_Tick;
 	bool is_first_Tick{true};
 };
 
@@ -52,12 +54,14 @@ protected:
 	vector<T>data;
 };
 
-class PosFileMgr : public WriteFileMgr<Pose>{
-	void write_line(ofstream& ofs,const Pose& pos) const override;
+class PosFileMgr : public WriteFileMgr<PoseBase>{
+	void write_line(
+			ofstream& ofs,
+			const PoseBase& pos) const override;
 };
 
-class FeatFileMgr :public WriteFileMgr<vector<Feature>>{
+class FeatFileMgr :public WriteFileMgr<vector<FeatBase>>{
 	void write_line(
 		ofstream& ofs,
-		const vector<Feature>& feat) const override;
+		const vector<FeatBase>& feat) const override;
 };

@@ -11,7 +11,7 @@ int main(){
 	//motor data definitions
 	MotorFileMgr* pmfm=MotorFileMgr::get_instance();
         unique_ptr<Odom>odo=make_unique<Odom>(
-			Pose(1850.0,1897.0,(213.0/180)*M_PI));
+			PoseBase(1850.0,1897.0,(213.0/180)*M_PI));
 	unique_ptr<PosFileMgr> pfm=make_unique<PosFileMgr>();
 	unique_ptr<RobotConfig> cfg=
 		make_unique<RobotConfig>(150.0,30.0,0.349);
@@ -25,9 +25,9 @@ int main(){
 	
 	// motor data
 	pmfm->read("../data/robot4_motors.txt");
-        vector<Tick> v(pmfm->get_data());
-	for(auto&Tick:v){
-		odo->UpdatePos(Tick,*cfg);
+        vector<ControlBase> v(pmfm->get_data());
+	for(auto& t:v){
+		odo->UpdatePos(t,*cfg);
 		pfm->add_sample(odo->get_pos());
 	}
 		
@@ -37,8 +37,8 @@ int main(){
 	psfm->read("../data/robot4_scan.txt");
 	vector<vector<u16>>scans(psfm->get_data());
 	for(auto&i:scans){
-		vector<Feature>vf(plfx->Feature_Extract(
-				i,*s_cfg));
+		vector<FeatBase>vf(plfx->Feature_Extract(
+				Scan::ScanBase<u16>(i),*s_cfg));
 		ffm->add_sample(vf);
 	}	
 

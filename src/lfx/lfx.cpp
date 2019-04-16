@@ -3,7 +3,7 @@
 #include<cmath>
 
 using namespace std;
-
+using namespace Robot;
 vector<si16> LidarFeatEx::derive_scan(
 		const vector<u16>& scan,
 		const ScanConfig& cfg){
@@ -19,11 +19,11 @@ vector<si16> LidarFeatEx::derive_scan(
 	return ret;
 }
 
-vector<Feature> LidarFeatEx::find_features(
+vector<FeatBase> LidarFeatEx::find_features(
 		const vector<u16>& scan,
 		const vector<si16>& derivative,
 		const ScanConfig& cfg){
-	vector<Feature>ret;
+	vector<FeatBase>ret;
 	bool is_feat_scanned(false);
 	f32 sum_rays(0),sum_depths(0);
 	u8 num_rays(0);
@@ -42,7 +42,7 @@ vector<Feature> LidarFeatEx::find_features(
 			f32 theta(RobotConfig::Ray_IdxToAng(avg_r));
 			f32 x((avg_d+cfg.Feat_Offset())*cos(theta));
 			f32 y((avg_d+cfg.Feat_Offset())*sin(theta));
-			ret.push_back(Feature(x,y));
+			ret.push_back(FeatBase(x,y));
 		}
 		else if(is_feat_scanned&&
 			scan[i]>cfg.Min_ValidDepth()){
@@ -55,9 +55,14 @@ vector<Feature> LidarFeatEx::find_features(
 	return ret;
 }
 
-vector<Feature> LidarFeatEx::Feature_Extract(
-		const vector<u16>& scan,
-		const ScanConfig& cfg){
-	vector<si16>derived_scan(derive_scan(scan,cfg));
-	return find_features(scan,derived_scan,cfg);
+vector<FeatBase> LidarFeatEx::Feature_Extract(
+		const Scan::ScanBase<u16>& scan,
+		const Scan::Config& cfg){
+	vector<si16>derived_scan(
+		derive_scan(scan.Depth(),
+		dynamic_cast<const ScanConfig&>(cfg)));
+	return find_features(
+		scan.Depth(),
+		derived_scan,
+		dynamic_cast<const ScanConfig&>(cfg));
 }
