@@ -1,19 +1,20 @@
 #include "common.h"
-#include "lfx_cfg.h"
+#include "scan.h"
+#include "feat.h"
 #include <vector>
 
 using namespace std;
-
-class LidarFeatEx{
+using namespace Feature;
+class LidarFeatExBase{
 	vector<si16> derive_scan(
-			const vector<u16>& scan,
-			const ScanConfig& cfg);
-	vector<FeatBase> find_features(
-			const vector<u16>& scan,
+			const Scan::Scan& scan,
+			const Scan::ScanConfig& cfg);
+	FeatList find_features(
+			const Scan::Scan& scan,
 			const vector<si16>& derivative,
-			const ScanConfig& cfg);
+			const Scan::ScanConfig& cfg);
 public:
-	vector<FeatBase> Feature_Extract(
-			const Scan::ScanBase<u16>& scan,
+	virtual FeatList Feature_Extract(
+			const Scan::Scan& scan,
 			const Scan::Config& cfg);
 };

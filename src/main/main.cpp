@@ -17,10 +17,10 @@ int main(){
 		make_unique<RobotConfig>(150.0,30.0,0.349);
 	//scan data definitions
 	ScanFileMgr* psfm(ScanFileMgr::get_instance());
-	unique_ptr<ScanConfig>s_cfg(
-		make_unique<ScanConfig>(20,100,90));
-	unique_ptr<LidarFeatEx>plfx(
-		make_unique<LidarFeatEx>());
+	unique_ptr<Scan::ScanConfig>s_cfg(
+		make_unique<Scan::ScanConfig>(20,100,90));
+	unique_ptr<LidarFeatExBase>plfx(
+		make_unique<LidarFeatExBase>());
 	unique_ptr<FeatFileMgr>ffm(make_unique<FeatFileMgr>());
 	
 	// motor data
@@ -35,13 +35,13 @@ int main(){
 	
 	//scan data
 	psfm->read("../data/robot4_scan.txt");
-	vector<vector<u16>>scans(psfm->get_data());
+	vector<Scan::Scan> scans(psfm->get_data());
+	vector<Feature::FeatList>vfl;
 	for(auto&i:scans){
-		vector<FeatBase>vf(plfx->Feature_Extract(
-				Scan::ScanBase<u16>(i),*s_cfg));
+		Feature::FeatList vf(plfx->Feature_Extract(
+				i,*s_cfg));
 		ffm->add_sample(vf);
 	}	
-
 	ffm->write("../data/cylinders.txt");
 	return 0;
 }

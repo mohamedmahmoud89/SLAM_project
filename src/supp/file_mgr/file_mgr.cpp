@@ -6,7 +6,6 @@
 //#include<memory>
 #include"file_open.h"
 using namespace std;
-
 // general Read 
 template<typename T>void ReadFileMgr<T>::read(const string& fn){
         ifstream file;
@@ -21,7 +20,7 @@ template<typename T>void ReadFileMgr<T>::read(const string& fn){
         }
 }
 
-template<typename T>vector<T> ReadFileMgr<T>::get_data() const noexcept{
+template<typename T>vector<T> ReadFileMgr<T>::get_data()const noexcept{
         return data;
 }
 
@@ -59,10 +58,11 @@ void ScanFileMgr::read_line(const string& line){
 	ss>>temp; // timestamp
 	ss>>temp; // count
 	u16 count(stoi(temp));
-	vector<u16>scan;
+	Scan::Scan scan;
 	for(u16 i=0;i<count;++i){
 		ss>>temp;
-		scan.push_back(stoi(temp));
+		scan.Push_Back(
+			make_shared<Scan::RayInfoBase>(stoi(temp)));
 	}
 	data.push_back(scan);
 }
@@ -98,16 +98,15 @@ void PosFileMgr::write_line(ofstream& ofs,const PoseBase& pos) const{
         ofs<<pos.Y()<<" ";
         ofs<<pos.Yaw()<<endl;
 }
-
 // Feature
 void FeatFileMgr::write_line(
 		ofstream& ofs,
-		const vector<FeatBase>& feat) const{
+		const Feature::FeatList& feat) const{
 	
 	ofs<<"D C ";
-	for(auto&i:feat){
-		ofs<<i.X()<<" ";
-		ofs<<i.Y()<<" ";
+	for(size_t i=0;i<feat.Data().List().size();++i){
+		ofs<<feat.Data()[i]->X()<<" ";
+		ofs<<feat.Data()[i]->Y()<<" ";
 	}
 	ofs<<endl;
 }

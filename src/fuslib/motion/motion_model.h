@@ -1,6 +1,6 @@
 #include "common.h"
 #include "robot_cfg.h"
-
+#include "ctrl_data.h"
 using namespace Robot;
 
 namespace Motion{
@@ -13,6 +13,6 @@ namespace Motion{
         	MotionModel& operator=(MotionModel&& rhs)=delete;
         	virtual void UpdatePos(
 				const ControlBase& c,
-				const Config& cfg)=0;
+				const Config& cfg){};
 	};
 };

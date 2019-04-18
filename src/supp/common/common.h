@@ -12,20 +12,6 @@ using si32=long;
 using f32=float;
 using f64=double;
 // use the default copy/move Ctors
-class ControlBase{ 
-        u32 l{0};
-        u32 r{0};
-public:
-        ControlBase(const u32 in_l,const u32 in_r):l(in_l),r(in_r){}
-        virtual u32 Left_Tick() const
-        {
-                return l;
-        }
-        virtual u32 Right_Tick() const
-        {
-                return r;
-        }
-};
 
 class PoseBase{
 	f32 x{0.0};
@@ -55,13 +41,4 @@ public:
 	}
 };
 
-class FeatBase{
-	f32 x{0};
-	f32 y{0};
-public:
-	FeatBase():x(0),y(0){}
-	FeatBase(const f32 x_mm,const f32 y_mm):x(x_mm),y(y_mm){}
-	virtual f32 X() const{return x;}
-	virtual f32 Y() const{return y;}
-};
 #endif

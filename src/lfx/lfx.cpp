@@ -1,17 +1,19 @@
 #include "lfx.h"
 #include "robot_cfg.h"
 #include<cmath>
-
+#include "feat.h"
 using namespace std;
 using namespace Robot;
-vector<si16> LidarFeatEx::derive_scan(
-		const vector<u16>& scan,
-		const ScanConfig& cfg){
+vector<si16> LidarFeatExBase::derive_scan(
+		const Scan::Scan& scan,
+		const Scan::ScanConfig& cfg){
 	vector<si16>ret(1,0);
-	for(size_t i=1;i<scan.size()-1;++i){
-		if(scan[i-1]>cfg.Min_ValidDepth()&&
-		   scan[i+1]>cfg.Min_ValidDepth()){
-			ret.push_back((scan[i+1]-scan[i-1])/2);
+	for(size_t i=1;i<scan.Data().List().size()-1;++i){
+		if(scan.Data()[i-1]->Depth()>cfg.Min_ValidDepth()&&
+		   scan.Data()[i+1]->Depth()>cfg.Min_ValidDepth()){
+			ret.push_back((
+				scan.Data()[i+1]->Depth()-
+				scan.Data()[i-1]->Depth())/2);
 			continue;
 		}
 		ret.push_back(0);
@@ -19,16 +21,16 @@ vector<si16> LidarFeatEx::derive_scan(
 	return ret;
 }
 
-vector<FeatBase> LidarFeatEx::find_features(
-		const vector<u16>& scan,
+Feature::FeatList LidarFeatExBase::find_features(
+		const Scan::Scan& scan,
 		const vector<si16>& derivative,
-		const ScanConfig& cfg){
-	vector<FeatBase>ret;
+		const Scan::ScanConfig& cfg){
+	Feature::FeatList ret;
 	bool is_feat_scanned(false);
 	f32 sum_rays(0),sum_depths(0);
 	u8 num_rays(0);
 
-	for(size_t i=0;i<scan.size();++i){
+	for(size_t i=0;i<derivative.size();++i){
 		if(derivative[i]<-cfg.Min_DeltaDepth()){
 			is_feat_scanned=true;
 			sum_rays=0;
@@ -42,27 +44,28 @@ vector<FeatBase> LidarFeatEx::find_features(
 			f32 theta(RobotConfig::Ray_IdxToAng(avg_r));
 			f32 x((avg_d+cfg.Feat_Offset())*cos(theta));
 			f32 y((avg_d+cfg.Feat_Offset())*sin(theta));
-			ret.push_back(FeatBase(x,y));
+			ret.Push_Back(
+				make_shared<FeatBase>(x,y,0));
 		}
 		else if(is_feat_scanned&&
-			scan[i]>cfg.Min_ValidDepth()){
+			scan.Data()[i]->Depth()>cfg.Min_ValidDepth()){
 			num_rays++;
 			sum_rays+=i;
-			sum_depths+=scan[i];
+			sum_depths+=scan.Data()[i]->Depth();
 		}
 	}
 
 	return ret;
 }
 
-vector<FeatBase> LidarFeatEx::Feature_Extract(
-		const Scan::ScanBase<u16>& scan,
+Feature::FeatList LidarFeatExBase::Feature_Extract(
+		const Scan::Scan& scan,
 		const Scan::Config& cfg){
 	vector<si16>derived_scan(
-		derive_scan(scan.Depth(),
-		dynamic_cast<const ScanConfig&>(cfg)));
+		derive_scan(scan,
+		dynamic_cast<const Scan::ScanConfig&>(cfg)));
 	return find_features(
-		scan.Depth(),
+		scan,
 		derived_scan,
-		dynamic_cast<const ScanConfig&>(cfg));
+		dynamic_cast<const Scan::ScanConfig&>(cfg));
 }

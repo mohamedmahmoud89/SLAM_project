@@ -3,8 +3,11 @@
 //#include<iostream>
 #include<fstream>
 #include "common.h"
+#include"ctrl_data.h"
+#include"scan.h"
+#include"feat.h"
 using namespace std;
-
+using namespace Feature;
 template<typename T>
 class ReadFileMgr{
 public:
@@ -36,7 +39,7 @@ private:
 	bool is_first_Tick{true};
 };
 
-class ScanFileMgr : public ReadFileMgr<vector<u16>>{
+class ScanFileMgr : public ReadFileMgr<Scan::Scan>{
 	ScanFileMgr()=default;
 public:
 	static ScanFileMgr* get_instance() noexcept;
@@ -60,8 +63,8 @@ class PosFileMgr : public WriteFileMgr<PoseBase>{
 			const PoseBase& pos) const override;
 };
 
-class FeatFileMgr :public WriteFileMgr<vector<FeatBase>>{
+class FeatFileMgr :public WriteFileMgr<Feature::FeatList>{
 	void write_line(
 		ofstream& ofs,
-		const vector<FeatBase>& feat) const override;
+		const Feature::FeatList& feat) const override;
 };
