@@ -44,8 +44,10 @@ Feature::FeatList LidarFeatExBase::find_features(
 			f32 theta(RobotConfig::Ray_IdxToAng(avg_r));
 			f32 x((avg_d+cfg.Feat_Offset())*cos(theta));
 			f32 y((avg_d+cfg.Feat_Offset())*sin(theta));
+			unique_ptr<FeatBase>p(
+				make_unique<FeatBase>(x,y,0));
 			ret.Push_Back(
-				make_shared<FeatBase>(x,y,0));
+				p);
 		}
 		else if(is_feat_scanned&&
 			scan.Data()[i]->Depth()>cfg.Min_ValidDepth()){

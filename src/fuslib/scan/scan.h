@@ -45,7 +45,7 @@ namespace Scan{
 	class Scan{
 		SmrtPtrVec<RayInfoBase> scan_data;
 	public:
-		SmrtPtrVec<RayInfoBase> Data() const noexcept
+		const SmrtPtrVec<RayInfoBase>& Data() const noexcept
 		{
 			return scan_data;
 		}

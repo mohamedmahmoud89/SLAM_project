@@ -22,7 +22,8 @@ public:
 };
 
 class FeatList{
-	SmrtPtrVec<FeatBase> features;
+	//SmrtPtrVec<FeatBase> features;
+	vector<unique_ptr<FeatBase>> features;
 public:
 	/*FeatList()=default;
 	FeatList(const FeatList& rhs):features(rhs.features){}
@@ -36,11 +37,13 @@ public:
 		features=move(rhs.features);
 		return *this;
 	}*/
-	const SmrtPtrVec<FeatBase>& Data() const noexcept{
+	//const SmrtPtrVec<FeatBase>& Data() const noexcept{
+	const vector<unique_ptr<FeatBase>>& Data() const noexcept{
 		return features;}
-	void Push_Back(const shared_ptr<FeatBase>& p_ft)
+	void Push_Back(unique_ptr<FeatBase>& p_ft)
 	{
-		features.Push_Back(p_ft);
+		//features.Push_Back(p_ft);
+		features.push_back(move(p_ft));
 	}
 };
 

@@ -12,7 +12,7 @@ int main(){
 	MotorFileMgr* pmfm=MotorFileMgr::get_instance();
         unique_ptr<Odom>odo=make_unique<Odom>(
 			PoseBase(1850.0,1897.0,(213.0/180)*M_PI));
-	unique_ptr<PosFileMgr> pfm=make_unique<PosFileMgr>();
+	unique_ptr<WriteFileMgr<PoseBase>> pfm=make_unique<PosFileMgr>();
 	unique_ptr<RobotConfig> cfg=
 		make_unique<RobotConfig>(150.0,30.0,0.349);
 	//scan data definitions
@@ -21,7 +21,8 @@ int main(){
 		make_unique<Scan::ScanConfig>(20,100,90));
 	unique_ptr<LidarFeatExBase>plfx(
 		make_unique<LidarFeatExBase>());
-	unique_ptr<FeatFileMgr>ffm(make_unique<FeatFileMgr>());
+	unique_ptr<WriteFileMgr<Feature::FeatList>>ffm(
+			make_unique<FeatFileMgr>());
 	
 	// motor data
 	pmfm->read("../data/robot4_motors.txt");

@@ -13,7 +13,7 @@ public:
 		MotionModel(),p_pos(make_unique<PoseBase>(p)){}
 	void UpdatePos(const ControlBase& c,
 			const Robot::Config& cfg) override;
-	const PoseBase get_pos() const noexcept{
+	PoseBase get_pos() const noexcept{
 		return *p_pos;	
 	}
 private:

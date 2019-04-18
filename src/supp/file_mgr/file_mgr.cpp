@@ -104,9 +104,17 @@ void FeatFileMgr::write_line(
 		const Feature::FeatList& feat) const{
 	
 	ofs<<"D C ";
-	for(size_t i=0;i<feat.Data().List().size();++i){
+	/*for(size_t i=0;i<feat.Data().size();++i){
 		ofs<<feat.Data()[i]->X()<<" ";
 		ofs<<feat.Data()[i]->Y()<<" ";
+	}*/
+	for(auto&i:feat.Data()){
+		ofs<<i->X()<<" ";
+		ofs<<i->Y()<<" ";
 	}
 	ofs<<endl;
+}
+
+void FeatFileMgr::add_sample(const Feature::FeatList& sample){
+	data.push_back(move((const_cast<FeatList&>(sample))));
 }

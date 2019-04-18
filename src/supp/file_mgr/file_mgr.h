@@ -50,8 +50,9 @@ private:
 template<typename T>
 class WriteFileMgr{
 public:
-	virtual void add_sample(const T& sample);
+	virtual void add_sample(const T& sample)=0;
 	virtual void write(const string& filename) const;
+	virtual ~WriteFileMgr(){}
 protected:
 	virtual void write_line(ofstream& ofs,const T& sample)const=0;
 	vector<T>data;
@@ -59,12 +60,18 @@ protected:
 
 class PosFileMgr : public WriteFileMgr<PoseBase>{
 	void write_line(
-			ofstream& ofs,
-			const PoseBase& pos) const override;
+		ofstream& ofs,
+		const PoseBase& pos) const override;
+public:
+	void add_sample(const PoseBase& sample){
+		WriteFileMgr<PoseBase>::add_sample(sample);
+	}
 };
 
 class FeatFileMgr :public WriteFileMgr<Feature::FeatList>{
 	void write_line(
 		ofstream& ofs,
 		const Feature::FeatList& feat) const override;
+public:	
+	void add_sample(const Feature::FeatList& sample)override;
 };
