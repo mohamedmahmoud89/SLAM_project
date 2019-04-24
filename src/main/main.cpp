@@ -27,7 +27,7 @@ int main(){
 	pmfm->read("../data/robot4_motors.txt");
         vector<ControlBase> v(pmfm->get_data());
 	for(auto& t:v){
-		odo->UpdatePos(t,*cfg);
+		odo->Update(t,*cfg);
 		pfm->add_sample(odo->get_pos());
 	}
 		

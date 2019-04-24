@@ -4,19 +4,26 @@
 #include<memory>
 using namespace std;
 using namespace Motion;
-class Odom : public MotionModel{
+class Odom : public MMSimple{
 	unique_ptr<PoseBase>p_pos;
 public:
 	Odom():
-		MotionModel(),p_pos(make_unique<PoseBase>()){}
+		MMSimple(),p_pos(make_unique<PoseBase>()){}
 	Odom(const PoseBase& p):
-		MotionModel(),p_pos(make_unique<PoseBase>(p)){}
-	void UpdatePos(const ControlBase& c,
-			const Robot::Config& cfg) override;
+		MMSimple(),p_pos(make_unique<PoseBase>(p)){}
+	~Odom(){}
+	/*void UpdatePos(unique_ptr<PoseBase>& pos,
+			const ControlBase& c,
+			const Robot::Config& cfg) override{
+		MMSimple::UpdatePos(p_pos,c,cfg);
+	}*/
+	void Update(
+		const ControlBase& c,
+		const Robot::Config& cfg)
+	{
+		MMSimple::UpdatePos(p_pos,c,cfg);
+	}
 	const PoseBase get_pos() const noexcept{
 		return *p_pos;	
 	}
-private:
-	void UpdateS(const ControlBase& t,const RobotConfig& cfg);
-	void UpdateC(const ControlBase& t,const RobotConfig& cfg);
 };

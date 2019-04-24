@@ -7,7 +7,8 @@ using namespace std;
 
 namespace Feature{
 class FeatBase{
-        f32 x{0};
+protected: 
+	f32 x{0};
         f32 y{0};
         size_t id{0};
 public:
@@ -16,7 +17,8 @@ public:
                 const f32 x_mm,
                 const f32 y_mm,
                 const size_t uid):x(x_mm),y(y_mm),id(uid){}
-        virtual f32 X() const noexcept{return x;}
+        virtual ~FeatBase(){}
+	virtual f32 X() const noexcept{return x;}
         virtual f32 Y() const noexcept{return y;}
         virtual size_t Id() const noexcept{return id;}
 };

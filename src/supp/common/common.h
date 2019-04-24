@@ -14,6 +14,7 @@ using f64=double;
 // use the default copy/move Ctors
 
 class PoseBase{
+protected:
 	f32 x{0.0};
 	f32 y{0.0};
 	f32 yaw{0.0};

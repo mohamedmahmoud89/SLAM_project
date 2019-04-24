@@ -11,6 +11,7 @@ include_directories(
 	../src/fuslib/motion
 	../src/fuslib/scan
 	../src/fuslib/feat
+	../src/fuslib/ekf
 	../src/odom
 	../src/lfx	
 )
@@ -20,7 +21,8 @@ add_executable(SLAM
 	../src/supp/matrix/matrix.cpp
 	../src/supp/gaus/gaus.cpp
 	../src/main/main.cpp
-	../src/odom/odom.cpp
 	../src/lfx/lfx.cpp
 	../src/fuslib/feat/feat.cpp
+	../src/fuslib/motion/motion_model.cpp
+	../src/fuslib/ekf/ekf.cpp
 )

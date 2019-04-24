@@ -7,6 +7,7 @@ using namespace std;
 namespace Scan{
 	class Config{
 	public:
+		virtual ~Config(){}
 		virtual u8 Min_ValidDepth() const noexcept=0;	
 	};
 	class ScanConfig : public Config{
@@ -20,6 +21,7 @@ namespace Scan{
                 min_valid_depth(dist),
                 min_delta_depth(jump),
                 feat_center_offset(offset){}
+		virtual ~ScanConfig(){}
 		u8 Min_ValidDepth() const noexcept override
 		{
 			return min_valid_depth;
@@ -28,7 +30,7 @@ namespace Scan{
 			return min_delta_depth;}
 		u8 Feat_Offset() const noexcept{
 			return feat_center_offset;}
-	private:
+	protected:
 		u8 min_valid_depth{0}; // min valid depth info
 		// min delta depth to consider a feat.
 		u8 min_delta_depth{0};
@@ -37,9 +39,11 @@ namespace Scan{
 	};
 
 	class RayInfoBase{
+	protected:
 		u16 depth;
 	public:
 		RayInfoBase(const u16 d):depth(d){}
+		virtual ~RayInfoBase(){}
 		virtual int Depth() const noexcept{return depth;}
 	};
 	class Scan{
