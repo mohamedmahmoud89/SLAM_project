@@ -51,6 +51,8 @@ template<typename T>
 class WriteFileMgr{
 public:
 	virtual void add_sample(const T& sample);
+	// here we can move write() to a base class and privately
+	// inhirint it to avoid code bloat
 	virtual void write(const string& filename) const;
 protected:
 	virtual void write_line(ofstream& ofs,const T& sample)const=0;

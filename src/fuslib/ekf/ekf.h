@@ -8,14 +8,17 @@
 using namespace std;
 using namespace Motion;
 using namespace Feature;
-template<const u8 state_space>
 class Ekf{
-	unique_ptr<MotionModel>mm;
-	Gaussian<PoseBase,state_space>belief;
+	unique_ptr<MMSimple>mm;
+	Gaussian<PoseBase>belief;
 public:
+	Ekf()=delete;
+	Ekf(const u8 state_space):
+		belief(Gaussian<PoseBase>(state_space)),
+		mm(make_unique<MMSimple>()){}
 	void Predict(const ControlBase& ctrl);
 	void Update(const FeatAssoc& assocs);
-	const Gaussian<PoseBase,state_space>& Belief() const
+	const Gaussian<PoseBase>& Belief() const
 	{
 		return belief;
 	}

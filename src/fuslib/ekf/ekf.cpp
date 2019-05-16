@@ -2,12 +2,10 @@
 
 using namespace std;
 
-template<u8 state_space>void Ekf<state_space>::Predict(
-		const ControlBase& ctrl){
+void Ekf::Predict(const ControlBase& ctrl){
 
 }
 
-template<u8 state_space>void Ekf<state_space>::Update(
-		const FeatAssoc& assocs){
+void Ekf::Update(const FeatAssoc& assocs){
 
 }

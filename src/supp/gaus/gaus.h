@@ -3,11 +3,14 @@
 #include<memory>
 using namespace std;
 
-template<typename T,const u8 state_space>
+template<typename T>
 class Gaussian{
         unique_ptr<T> mean;
-        Matrix<f32,state_space,state_space> covariance;
+        Matrix<f32> covariance;
 public:
-        Gaussian(){}
+        Gaussian(const u8 state_space):
+		mean(make_unique<T>()),
+		covariance(state_space,state_space){};
+	Gaussian()=delete;
 };
 
