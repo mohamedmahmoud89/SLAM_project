@@ -13,7 +13,10 @@ include_directories(
 	../src/fuslib/feat
 	../src/fuslib/ekf
 	../src/odom
-	../src/lfx	
+	../src/lfx
+	../src/main/test_odom
+	../src/main/test_scan
+	../src/main/test_klmn	
 )
 add_executable(SLAM 
 	../src/cfg/robot_cfg.cpp

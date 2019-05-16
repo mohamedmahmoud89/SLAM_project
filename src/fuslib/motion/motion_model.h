@@ -1,3 +1,5 @@
+#ifndef MOTION_H
+#define MOTION_H
 #include "common.h"
 #include "robot_cfg.h"
 #include "ctrl_data.h"
@@ -37,3 +39,4 @@ namespace Motion{
 			const RobotConfig& cfg)const;
 	};
 };
+#endif

@@ -21,6 +21,8 @@ public:
 	virtual f32 X() const noexcept{return x;}
         virtual f32 Y() const noexcept{return y;}
         virtual size_t Id() const noexcept{return id;}
+	void Set_X(f32 in){x=in;}
+	void Set_Y(f32 in){y=in;}
 };
 
 class FeatList{
@@ -70,5 +72,7 @@ public:
 private:
 	AssocTables t;
 };
+
+void FeatureTransform(FeatBase& feat,const PoseBase& coord);
 };
 #endif

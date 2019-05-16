@@ -1,3 +1,5 @@
+#ifndef LFX_H
+#define LFX_H
 #include "common.h"
 #include "scan.h"
 #include "feat.h"
@@ -14,7 +16,9 @@ class LidarFeatExBase{
 			const vector<si16>& derivative,
 			const Scan::ScanConfig& cfg);
 public:
+	virtual ~LidarFeatExBase(){}
 	virtual FeatList Feature_Extract(
 			const Scan::Scan& scan,
 			const Scan::Config& cfg);
 };
+#endif

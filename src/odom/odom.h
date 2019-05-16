@@ -1,3 +1,5 @@
+#ifndef ODOM_H
+#define ODOM_H
 #include"common.h"
 #include"robot_cfg.h"
 #include "motion_model.h"
@@ -27,3 +29,4 @@ public:
 		return *p_pos;	
 	}
 };
+#endif

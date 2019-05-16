@@ -22,6 +22,7 @@ public:
 	PoseBase():x(0.0),y(0.0),yaw(0.0){}
 	PoseBase(f32 in_x,f32 in_y,f32 in_yaw):
 		x(in_x),y(in_y),yaw(in_yaw){}
+	virtual ~PoseBase(){}
 	virtual f32 X() const noexcept{
 		return x;
 	}
@@ -41,5 +42,6 @@ public:
 		return yaw;
 	}
 };
+
 
 #endif

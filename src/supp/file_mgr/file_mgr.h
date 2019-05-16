@@ -1,3 +1,5 @@
+#ifndef FILE_MGR_H
+#define FILE_MGR_H
 #include<vector>
 #include<string>
 //#include<iostream>
@@ -70,3 +72,4 @@ class FeatFileMgr :public WriteFileMgr<Feature::FeatList>{
 		ofstream& ofs,
 		const Feature::FeatList& feat) const override;
 };
+#endif
