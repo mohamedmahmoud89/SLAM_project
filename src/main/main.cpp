@@ -1,7 +1,6 @@
-#include"test_odom.h"
-#include"test_scan.h"
-#include"test_klmn.h"
-using namespace std;
+#include"test.h"
+
+using namespace Test;
 
 int main(){
 	// Odom test	

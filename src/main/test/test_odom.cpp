@@ -2,9 +2,10 @@
 #include<memory>
 #include"odom.h"
 #include<cmath>
+#include"test.h"
 using namespace std;
 
-void Test_Odom(){
+void Test::Test_Odom(){
         //motor data definitions
         MotorFileMgr* pmfm=MotorFileMgr::get_instance();
         unique_ptr<Odom>odo=make_unique<Odom>(

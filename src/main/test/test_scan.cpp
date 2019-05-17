@@ -1,10 +1,10 @@
 #include"file_mgr.h"
 #include<memory>
 #include"lfx.h"
-
+#include"test.h"
 using namespace std;
 
-void Test_Scan(){
+void Test::Test_Scan(){
         //scan data definitions
 	ScanFileMgr* psfm(ScanFileMgr::get_instance());
         unique_ptr<Scan::ScanConfig>s_cfg(
