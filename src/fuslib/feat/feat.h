@@ -1,7 +1,7 @@
 #ifndef FUS_FEAT_H
 #define FUS_FEAT_H
 #include "common.h"
-#include"ptr_vec.h"
+#include "robot_cfg.h"
 #include<unordered_map>
 using namespace std;
 
@@ -28,33 +28,19 @@ public:
 class FeatList{
 	SmrtPtrVec<FeatBase> features;
 public:
-	/*FeatList()=default;
-	FeatList(const FeatList& rhs):features(rhs.features){}
-	FeatList& operator=(const FeatList& rhs)
-	{
-		features=rhs.features;
-		return *this;
-	}
-	FeatList(FeatList&& rhs):features(move(rhs.features)){}
-	FeatList& operator=(FeatList&& rhs){
-		features=move(rhs.features);
-		return *this;
-	}*/
 	const SmrtPtrVec<FeatBase>& Data() const noexcept{
 		return features;}
 	void Push_Back(const shared_ptr<FeatBase>& p_ft)
 	{
-		features.Push_Back(p_ft);
+		features.push_back(p_ft);
 	}
 };
 
 class FeatAssoc{
-public:
-        class AssocTables{
         public:
-                unordered_map<size_t,shared_ptr<FeatBase>>scanned;
-                unordered_map<size_t,shared_ptr<FeatBase>>stored;
-                unordered_map<size_t,size_t> assocs;
+                unordered_map<size_t,shared_ptr<FeatBase>>scanned_t;
+                unordered_map<size_t,shared_ptr<FeatBase>>stored_t;
+                unordered_map<size_t,size_t> assocs_t;
 		/*AssocTables(const AssocTables& rhs):
 			scanned(move(rhs.scanned)),
 			stored(move(rhs.stored)),
@@ -65,14 +51,16 @@ public:
 			assocs=move(rhs.assocs);
 			return *this;
 		}*/
-        };
-        const AssocTables& Update_Assocs(
-                const FeatList& scanned,
-                const FeatList& stored);
-private:
-	AssocTables t;
 };
 
-void FeatureTransform(FeatBase& feat,const PoseBase& coord);
+unique_ptr<FeatAssoc> FeatAssociate(
+                const SmrtPtrVec<FeatBase>& scanned,
+                const SmrtPtrVec<FeatBase>& stored);
+
+
+void FeatureTransform(
+		FeatBase& feat,
+		const PoseBase& coord,
+		const Robot::RobotConfig& cfg);
 };
 #endif

@@ -4,10 +4,10 @@ using namespace Test;
 
 int main(){
 	// Odom test	
-	Test_Odom();
+	//Test_Odom();
 
 	// Scan test
-	Test_Scan();
+	//Test_Scan();
 	
 	// KLMN test
 	Test_Klmn();

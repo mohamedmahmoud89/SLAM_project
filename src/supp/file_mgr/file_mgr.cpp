@@ -82,7 +82,7 @@ void RefLandmarkFileMgr::read_line(const string& line){
 	f32 x(stoi(temp));
 	ss >> temp; // y
 	f32 y(stoi(temp));
-	data.push_back(Feature::FeatBase(x,y,0));
+	data.push_back(make_shared<Feature::FeatBase>(x,y,id++));
 }
 
 RefLandmarkFileMgr* RefLandmarkFileMgr::get_instance() noexcept{
@@ -122,7 +122,7 @@ void FeatFileMgr::write_line(
 		const Feature::FeatList& feat) const{
 	
 	ofs<<"D C ";
-	for(auto&i:feat.Data().List()){
+	for(auto&i:feat.Data()){
 		ofs<<i->X()<<" ";
 		ofs<<i->Y()<<" ";
 	}

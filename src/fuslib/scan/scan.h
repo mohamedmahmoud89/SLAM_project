@@ -1,7 +1,6 @@
 #ifndef FUS_SCAN_H
 #define FUS_SCAN_H
 #include "common.h"
-#include "ptr_vec.h"
 using namespace std;
 
 namespace Scan{
@@ -55,7 +54,7 @@ namespace Scan{
 		}
 		void Push_Back(const shared_ptr<RayInfoBase>& p_ray)
 		{
-			scan_data.Push_Back(p_ray);
+			scan_data.push_back(p_ray);
 		}
 	};
 };

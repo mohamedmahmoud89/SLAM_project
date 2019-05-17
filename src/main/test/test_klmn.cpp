@@ -8,9 +8,7 @@
 using namespace std;
 
 //TODO:
-//1-read the reference cylinders data and fill a FeatList of em
-//2-transform the feature list vf to the world coords
-//3-associate both together
+//implement the prediction step
 void Test::Test_Klmn(){
         //motor data definitions
         MotorFileMgr* pmfm=MotorFileMgr::get_instance();
@@ -34,17 +32,21 @@ void Test::Test_Klmn(){
         prfm->read("../data/robot_arena_landmarks.txt");
         vector<ControlBase> ticks(pmfm->get_data());
 	vector<Scan::Scan> scans(psfm->get_data());
-        vector<Feature::FeatBase> refs(prfm->get_data());
+        SmrtPtrVec<Feature::FeatBase> refs(prfm->get_data());
         for(int i=0;i<ticks.size();++i){
                 //predict
                 odo->Update(ticks[i],*cfg);
 
                 //associate
-                Feature::FeatList vf(plfx->Feature_Extract(
+                FeatList vf(plfx->Feature_Extract(
                                 scans[i],*s_cfg));
-                for(auto&i:vf.Data().List()){
-                        FeatureTransform(*i,odo->get_pos());
+                for(auto&i:vf.Data()){
+                        // transform the features to world coords
+			// based on the robot pos
+			FeatureTransform(*i,odo->get_pos(),*cfg);
                 }
+		unique_ptr<FeatAssoc> assocs(
+			FeatAssociate(vf.Data(),refs));
         }
 }
 

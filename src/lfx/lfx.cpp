@@ -8,7 +8,7 @@ vector<si16> LidarFeatExBase::derive_scan(
 		const Scan::Scan& scan,
 		const Scan::ScanConfig& cfg){
 	vector<si16>ret(1,0);
-	for(size_t i=1;i<scan.Data().List().size()-1;++i){
+	for(size_t i=1;i<scan.Data().size()-1;++i){
 		if(scan.Data()[i-1]->Depth()>cfg.Min_ValidDepth()&&
 		   scan.Data()[i+1]->Depth()>cfg.Min_ValidDepth()){
 			ret.push_back((
@@ -29,6 +29,7 @@ Feature::FeatList LidarFeatExBase::find_features(
 	bool is_feat_scanned(false);
 	f32 sum_rays(0),sum_depths(0);
 	u8 num_rays(0);
+	size_t id(0);
 
 	for(size_t i=0;i<derivative.size();++i){
 		if(derivative[i]<-cfg.Min_DeltaDepth()){
@@ -45,7 +46,7 @@ Feature::FeatList LidarFeatExBase::find_features(
 			f32 x((avg_d+cfg.Feat_Offset())*cos(theta));
 			f32 y((avg_d+cfg.Feat_Offset())*sin(theta));
 			ret.Push_Back(
-				make_shared<FeatBase>(x,y,0));
+				make_shared<FeatBase>(x,y,id++));
 		}
 		else if(is_feat_scanned&&
 			scan.Data()[i]->Depth()>cfg.Min_ValidDepth()){

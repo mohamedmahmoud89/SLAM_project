@@ -1,6 +1,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 #include<vector>
+#include<memory>
 using namespace std;
 
 using u8=unsigned char;
@@ -11,7 +12,9 @@ using si16=short;
 using si32=long;
 using f32=float;
 using f64=double;
-// use the default copy/move Ctors
+
+template<typename T>
+using SmrtPtrVec=vector<shared_ptr<T>>;
 
 class PoseBase{
 protected:

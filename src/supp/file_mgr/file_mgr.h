@@ -49,11 +49,18 @@ private:
 	void read_line(const string& line) override;
 };
 
-class RefLandmarkFileMgr : public ReadFileMgr<Feature::FeatBase>{
+class RefLandmarkFileMgr : 
+	public ReadFileMgr<shared_ptr<Feature::FeatBase>>{
 public:
+	using PtrFeat=shared_ptr<Feature::FeatBase>;
 	static RefLandmarkFileMgr* get_instance() noexcept;
+	void read(const string& filename)override{
+		ReadFileMgr<PtrFeat>::read(filename);
+		id=0;
+	}
 private:
 	void read_line(const string& line) override;
+	u16 id{0};
 };
 
 template<typename T>
