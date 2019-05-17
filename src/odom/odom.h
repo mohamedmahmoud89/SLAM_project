@@ -25,7 +25,7 @@ public:
 	{
 		MMSimple::UpdatePos(p_pos,c,cfg);
 	}
-	const PoseBase get_pos() const noexcept{
+	const PoseBase& get_pos() const noexcept{
 		return *p_pos;	
 	}
 };

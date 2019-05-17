@@ -49,6 +49,13 @@ private:
 	void read_line(const string& line) override;
 };
 
+class RefLandmarkFileMgr : public ReadFileMgr<Feature::FeatBase>{
+public:
+	static RefLandmarkFileMgr* get_instance() noexcept;
+private:
+	void read_line(const string& line) override;
+};
+
 template<typename T>
 class WriteFileMgr{
 public:

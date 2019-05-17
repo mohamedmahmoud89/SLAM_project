@@ -3,7 +3,7 @@
 using namespace std;
 using namespace Feature;
 
-void FeatureTransform(
+void Feature::FeatureTransform(
 		FeatBase& feat,
 		const PoseBase& coord){
 	f32 x(coord.X()+feat.X()*cos(coord.Yaw()));

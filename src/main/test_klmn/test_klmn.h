@@ -3,6 +3,7 @@
 #include"odom.h"
 #include<cmath>
 #include"lfx.h"
+#include"feat.h"
 using namespace std;
 //TODO:
 //1-read the reference cylinders data and fill a FeatList of em
@@ -21,19 +22,27 @@ void Test_Klmn(){
                 make_unique<Scan::ScanConfig>(20,100,90));
         unique_ptr<LidarFeatExBase>plfx(
                 make_unique<LidarFeatExBase>());
-	
-        // motor data
+	//ref landmark data definitions
+	RefLandmarkFileMgr* prfm(RefLandmarkFileMgr::get_instance());
+
+		
+        // read data
         pmfm->read("../data/robot4_motors.txt");
         psfm->read("../data/robot4_scan.txt");
-        vector<ControlBase> ticks(pmfm->get_data());
+        prfm->read("../data/robot_arena_landmarks.txt");
+	vector<ControlBase> ticks(pmfm->get_data());
         vector<Scan::Scan> scans(psfm->get_data());
+	vector<Feature::FeatBase> refs(prfm->get_data());
         for(int i=0;i<ticks.size();++i){
                 //predict
 		odo->Update(ticks[i],*cfg);
 
-		//update
+		//associate
                 Feature::FeatList vf(plfx->Feature_Extract(
                                 scans[i],*s_cfg));
+		for(auto&i:vf.Data().List()){
+			FeatureTransform(*i,odo->get_pos());
+		}
         }
 }
 

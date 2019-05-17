@@ -72,6 +72,24 @@ ScanFileMgr* ScanFileMgr::get_instance() noexcept{
         return &g_sfm;
 }
 
+//Ref landmark
+void RefLandmarkFileMgr::read_line(const string& line){
+	stringstream ss(line);
+	string temp;
+	ss >> temp; // L
+	ss >> temp; // C
+	ss >> temp; // x
+	f32 x(stoi(temp));
+	ss >> temp; // y
+	f32 y(stoi(temp));
+	data.push_back(Feature::FeatBase(x,y,0));
+}
+
+RefLandmarkFileMgr* RefLandmarkFileMgr::get_instance() noexcept{
+	static RefLandmarkFileMgr g_rlfm;
+	return &g_rlfm;
+}
+
 // general Write
 template<typename T>void WriteFileMgr<T>::add_sample(const T& sample){
 	data.push_back(sample);
