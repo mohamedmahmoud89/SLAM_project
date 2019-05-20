@@ -5,6 +5,7 @@
 #include"lfx.h"
 #include"feat.h"
 #include"test.h"
+#include"ekf.h"
 using namespace std;
 
 //TODO:
@@ -12,10 +13,6 @@ using namespace std;
 void Test::Test_Klmn(){
         //motor data definitions
         MotorFileMgr* pmfm=MotorFileMgr::get_instance();
-        unique_ptr<Odom>odo=make_unique<Odom>(
-                        PoseBase(1850.0,1897.0,(213.0/180)*M_PI));
-        unique_ptr<RobotConfig> cfg=
-                make_unique<RobotConfig>(150.0,30.0,0.349);
         //scan data definitions
         ScanFileMgr* psfm(ScanFileMgr::get_instance());
         unique_ptr<Scan::ScanConfig>s_cfg(
@@ -25,6 +22,11 @@ void Test::Test_Klmn(){
         //ref landmark data definitions
         RefLandmarkFileMgr* prfm(RefLandmarkFileMgr::get_instance());
 
+	//ekf definitions
+	Matrix<f32> covariance(3,3);
+        PoseBase pos(1850.0,1897.0,(213.0/180)*M_PI);
+        RobotConfig cfg(150.0,30.0,0.349);
+	Ekf ekf(pos,covariance);
 
         // read data
         pmfm->read("../data/robot4_motors.txt");
@@ -35,7 +37,7 @@ void Test::Test_Klmn(){
         SmrtPtrVec<Feature::FeatBase> refs(prfm->get_data());
         for(int i=0;i<ticks.size();++i){
                 //predict
-                odo->Update(ticks[i],*cfg);
+                ekf.Predict(ticks[i],cfg);
 
                 //associate
                 FeatList vf(plfx->Feature_Extract(
@@ -43,10 +45,13 @@ void Test::Test_Klmn(){
                 for(auto&i:vf.Data()){
                         // transform the features to world coords
 			// based on the robot pos
-			FeatureTransform(*i,odo->get_pos(),*cfg);
+			FeatureTransform(*i,*ekf.Belief().Mean(),cfg);
                 }
 		unique_ptr<FeatAssoc> assocs(
 			FeatAssociate(vf.Data(),refs));
+
+		//update
+		ekf.Update(*assocs);
         }
 }
 

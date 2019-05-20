@@ -16,7 +16,7 @@ namespace Motion{
         	MotionModel& operator=(MotionModel&& rhs)=delete;
         	virtual ~MotionModel(){}
 		virtual void UpdatePos(
-				unique_ptr<PoseBase>& pos,
+				PoseBase& pos,
 				const ControlBase& c,
 				const Config& cfg) const=0;
 	};
@@ -25,16 +25,16 @@ namespace Motion{
 	public:
 		virtual ~MMSimple(){}
 		virtual void UpdatePos(
-				unique_ptr<PoseBase>& pos,
+				PoseBase& pos,
 				const ControlBase& c,
 				const Config& cfg) const;
 	private:
 		void UpdateS(
-			unique_ptr<PoseBase>& pos,
+			PoseBase& pos,
 			const ControlBase& t,
 			const RobotConfig& cfg)const;
 		void UpdateC(
-			unique_ptr<PoseBase>& pos,
+			PoseBase& pos,
 			const ControlBase& t,
 			const RobotConfig& cfg)const;
 	};
