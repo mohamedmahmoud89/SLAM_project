@@ -7,7 +7,7 @@
 #include"test.h"
 #include"ekf.h"
 using namespace std;
-
+using namespace Eigen;
 //TODO:
 //implement the prediction step
 void Test::Test_Klmn(){
@@ -23,10 +23,14 @@ void Test::Test_Klmn(){
         RefLandmarkFileMgr* prfm(RefLandmarkFileMgr::get_instance());
 
 	//ekf definitions
-	Matrix<f32> covariance(3,3);
+	Matrix3f covariance;
+       covariance << pow(100,2),0,0,
+		     0,pow(100,2),0,
+		     0,0,pow(((10.0 / 180.0) * M_PI),2);
         PoseBase pos(1850.0,1897.0,(213.0/180)*M_PI);
         RobotConfig cfg(150.0,30.0,0.349);
-	Ekf ekf(pos,covariance);
+	Matrix2f motion_covar;
+	Ekf ekf(3,pos,covariance);
 
         // read data
         pmfm->read("../data/robot4_motors.txt");
@@ -37,7 +41,7 @@ void Test::Test_Klmn(){
         SmrtPtrVec<Feature::FeatBase> refs(prfm->get_data());
         for(int i=0;i<ticks.size();++i){
                 //predict
-                ekf.Predict(ticks[i],cfg);
+                ekf.Predict(ticks[i],cfg,motion_covar);
 
                 //associate
                 FeatList vf(plfx->Feature_Extract(

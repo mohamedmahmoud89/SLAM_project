@@ -6,7 +6,6 @@ include_directories(
 	../src/supp/file_mgr
 	../src/supp/raii
 	../src/supp/common
-	../src/supp/matrix
 	../src/supp/gaus
 	../src/fuslib/motion
 	../src/fuslib/scan
@@ -15,11 +14,11 @@ include_directories(
 	../src/odom
 	../src/lfx
 	../src/main/test
+	../src/supp/eigen
 )
 add_executable(SLAM 
 	../src/cfg/robot_cfg.cpp
 	../src/supp/file_mgr/file_mgr.cpp 
-	../src/supp/matrix/matrix.cpp
 	../src/supp/gaus/gaus.cpp
 	../src/lfx/lfx.cpp
 	../src/fuslib/feat/feat.cpp
