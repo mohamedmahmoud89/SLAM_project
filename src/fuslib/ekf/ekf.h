@@ -31,7 +31,24 @@ public:
 	}
 private:
 	shared_ptr<MatrixXf> Compute_G(
+			const PoseBase& pos,
 			const ControlBase& ctrl,
 			const Robot::Config& cfg);
+	
+	shared_ptr<MatrixXf> Compute_G_linear(
+			const PoseBase& pos,
+			const ControlBase& ctrl,
+			const Robot::Config& cfg);
+	
+	shared_ptr<MatrixXf> Compute_G_non_linear(
+			const PoseBase& pos,
+			const ControlBase& ctrl,
+			const Robot::Config& cfg);
+	
+	shared_ptr<MatrixXf> Compute_V(
+			const PoseBase& pos,
+			const ControlBase& ctrl,
+			const Robot::Config& cfg);
+	
 	//shared_ptr<MatrixXf> Compute_V();	
 };
