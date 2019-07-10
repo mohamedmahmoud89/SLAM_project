@@ -1,7 +1,7 @@
 #ifndef ROBOT_CFG_H
 #define ROBOT_CFG_H
 #include "common.h"
-
+#include "gaus.h"
 using namespace std;
 
 namespace Robot{

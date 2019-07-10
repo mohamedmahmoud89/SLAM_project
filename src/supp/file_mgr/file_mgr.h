@@ -8,6 +8,7 @@
 #include"ctrl_data.h"
 #include"scan.h"
 #include"feat.h"
+#include "ekf.h"
 using namespace std;
 using namespace Feature;
 template<typename T>
@@ -85,5 +86,11 @@ class FeatFileMgr :public WriteFileMgr<Feature::FeatList>{
 	void write_line(
 		ofstream& ofs,
 		const Feature::FeatList& feat) const override;
+};
+
+class EkfFileMgr : public WriteFileMgr<EkfOutput>{
+	void write_line(
+			ofstream& ofs,
+			const EkfOutput& ekf)const override;
 };
 #endif

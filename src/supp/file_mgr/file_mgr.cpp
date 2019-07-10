@@ -128,3 +128,9 @@ void FeatFileMgr::write_line(
 	}
 	ofs<<endl;
 }
+// Ekf
+void EkfFileMgr::write_line(
+		ofstream& ofs,
+		const EkfOutput& pos) const{
+
+}

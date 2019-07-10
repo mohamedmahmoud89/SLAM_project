@@ -102,14 +102,34 @@ shared_ptr<MatrixXf> Ekf::Compute_V(
 	return ret;
 }
 
+shared_ptr<MatrixXf> Ekf::Compute_SigmaCtrl(
+                        const ControlBase& ctrl,
+			const Robot::Config& cfg){
+	shared_ptr<MatrixXf>ret(make_shared<MatrixXf>(2,2));
+	f32 t2mm(cfg.Ticks_ToMm());
+        f32 r(ctrl.Right_Tick()*t2mm);
+        f32 l(ctrl.Left_Tick() *t2mm);
+	f32 motion_var_l(pow(ctrl_motion*l,2)+
+			 pow(ctrl_turn*(l-r),2));
+	f32 motion_var_r(pow(ctrl_motion*r,2)+
+			 pow(ctrl_turn*(l-r),2));
+	(*ret) << motion_var_l,0,
+		  0,motion_var_r;
+	return ret;
+}
+
 void Ekf::Predict(
 		const ControlBase& ctrl,
-		const Robot::Config& cfg,
-		const MatrixXf& motion_covar){
+		const Robot::Config& cfg){
 	unique_ptr<MMSimple>p_motion(make_unique<MMSimple>());
+	shared_ptr<MatrixXf> sigma_ctrl(Compute_SigmaCtrl(ctrl,cfg));
+	shared_ptr<MatrixXf> G(Compute_G(*belief.Mean(),ctrl,cfg));
+	shared_ptr<MatrixXf> V(Compute_V(*belief.Mean(),ctrl,cfg));
 	// R=V*Sigma_ctrl*VT   V=dg/d ctrl
+	MatrixXf R((*V)*(*sigma_ctrl)*((*V).transpose()));
 	// Sigma=G*Sigma*GT+R  G=dg/d state
-	
+	*(belief.Covariance())=
+		(*G)*(*belief.Covariance())*((*G).transpose())+R;
 	// Mu=g(Mt-1,Ut)
 	shared_ptr<PoseBase>p_pos(belief.Mean());
 	p_motion->UpdatePos(*p_pos,ctrl,cfg);
@@ -121,4 +141,11 @@ void Ekf::Update(const FeatAssoc& assocs){
 	// Mu=Mu+K*(Z-h(Mu))
 	
 	// Sigma=(I-K*H)Sigma
+}
+
+tuple<f32,f32,f32> EkfOutput::Std(){
+	tuple<f32,f32,f32>ret;
+	SelfAdjointEigenSolver<MatrixXf> eigensolver(
+			*belief.Covariance());
+	return ret;
 }

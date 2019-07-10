@@ -22,15 +22,20 @@ void Test::Test_Klmn(){
         //ref landmark data definitions
         RefLandmarkFileMgr* prfm(RefLandmarkFileMgr::get_instance());
 
+	// output file Mgr
+	unique_ptr<EkfFileMgr> efm=make_unique<EkfFileMgr>();
+	
 	//ekf definitions
 	Matrix3f covariance;
-       covariance << pow(100,2),0,0,
+        covariance << pow(100,2),0,0,
 		     0,pow(100,2),0,
 		     0,0,pow(((10.0 / 180.0) * M_PI),2);
         PoseBase pos(1850.0,1897.0,(213.0/180)*M_PI);
         RobotConfig cfg(150.0,30.0,0.349);
 	Matrix2f motion_covar;
-	Ekf ekf(3,pos,covariance);
+	f32 control_motion(0.35);
+	f32 control_turn(0.6);
+	Ekf ekf(3,pos,covariance,control_motion,control_turn);
 
         // read data
         pmfm->read("../data/robot4_motors.txt");
@@ -39,9 +44,11 @@ void Test::Test_Klmn(){
         vector<ControlBase> ticks(pmfm->get_data());
 	vector<Scan::Scan> scans(psfm->get_data());
         SmrtPtrVec<Feature::FeatBase> refs(prfm->get_data());
+	
+	// Ekf loop
         for(int i=0;i<ticks.size();++i){
                 //predict
-                ekf.Predict(ticks[i],cfg,motion_covar);
+                ekf.Predict(ticks[i],cfg);
 
                 //associate
                 FeatList vf(plfx->Feature_Extract(
@@ -56,7 +63,13 @@ void Test::Test_Klmn(){
 
 		//update
 		ekf.Update(*assocs);
+
+		//store outputs
+		EkfOutput log(ekf.Belief(),cfg);
+		efm->add_sample(log);
         }
+	// write output file
+	efm->write("../data/klmn.txt");
 }
 
 

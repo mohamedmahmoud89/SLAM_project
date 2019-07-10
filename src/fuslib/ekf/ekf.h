@@ -1,3 +1,5 @@
+#ifndef EKF_H
+#define EKF_H
 #include "common.h"
 #include "feat.h"
 #include "gaus.h"
@@ -12,18 +14,23 @@ using namespace Eigen;
 class Ekf{
 	Gaussian<PoseBase>belief;
 	u8 state_space;
+	f32 ctrl_motion;
+	f32 ctrl_turn;
 public:
 	Ekf()=delete;
 	Ekf(
 		const u8 st_space,
 		const PoseBase& init_state,
-		const MatrixXf& init_covar):
+		const MatrixXf& init_covar,
+		const f32 control_motion,
+		const f32 control_turn):
 		state_space(st_space),
-		belief(Gaussian<PoseBase>(init_state,init_covar)){}
+		belief(Gaussian<PoseBase>(init_state,init_covar)),
+		ctrl_motion(control_motion),
+		ctrl_turn(control_turn){}
 	void Predict(
 		const ControlBase& ctrl,
-		const Robot::Config& cfg,
-		const MatrixXf& motion_covariance);
+		const Robot::Config& cfg);
 	void Update(const FeatAssoc& assocs);
 	const Gaussian<PoseBase>& Belief() const
 	{
@@ -50,5 +57,23 @@ private:
 			const ControlBase& ctrl,
 			const Robot::Config& cfg);
 	
+	shared_ptr<MatrixXf> Compute_SigmaCtrl(
+			const ControlBase& ctrl,
+			const Robot::Config& cfg);
+	
 	//shared_ptr<MatrixXf> Compute_V();	
 };
+
+class EkfOutput{
+        Gaussian<PoseBase> belief;
+        Robot::RobotConfig cfg;
+public:  
+	EkfOutput()=delete;
+	EkfOutput(
+                        const Gaussian<PoseBase>&b,
+                        const Robot::RobotConfig& c):
+                belief(b),
+                cfg(c){}
+	tuple<f32,f32,f32> Std();
+};
+#endif
