@@ -74,6 +74,7 @@ public:
                         const Robot::RobotConfig& c):
                 belief(b),
                 cfg(c){}
-	tuple<f32,f32,f32> Std();
+	tuple<f32,f32,f32,f32> Std() const;
+	unique_ptr<PoseBase> Pos() const;
 };
 #endif

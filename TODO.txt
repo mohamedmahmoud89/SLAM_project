@@ -1,2 +1,1 @@
-1. write line function in file_mgr.cpp for the Ekf output log file.
-2. Std() function in Efk.cpp file -->eign vlues eigen vectors decomposition.
+1. test and bugfix the prediction step.

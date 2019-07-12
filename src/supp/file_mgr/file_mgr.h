@@ -91,6 +91,6 @@ class FeatFileMgr :public WriteFileMgr<Feature::FeatList>{
 class EkfFileMgr : public WriteFileMgr<EkfOutput>{
 	void write_line(
 			ofstream& ofs,
-			const EkfOutput& ekf)const override;
+			const EkfOutput& out)const override;
 };
 #endif

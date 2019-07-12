@@ -131,6 +131,16 @@ void FeatFileMgr::write_line(
 // Ekf
 void EkfFileMgr::write_line(
 		ofstream& ofs,
-		const EkfOutput& pos) const{
-
+		const EkfOutput& out) const{
+	ofs<<"F ";
+	ofs<<out.Pos()->X()<<" ";	
+	ofs<<out.Pos()->Y()<<" ";
+	ofs<<out.Pos()->Yaw()<<" ";
+	ofs<<endl;
+	ofs<<"E ";
+	ofs<<get<0>(out.Std())<<" ";
+	ofs<<get<1>(out.Std())<<" ";
+	ofs<<get<2>(out.Std())<<" ";
+	ofs<<get<3>(out.Std());
+	ofs<<endl;
 }

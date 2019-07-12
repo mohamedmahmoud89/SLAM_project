@@ -143,9 +143,26 @@ void Ekf::Update(const FeatAssoc& assocs){
 	// Sigma=(I-K*H)Sigma
 }
 
-tuple<f32,f32,f32> EkfOutput::Std(){
-	tuple<f32,f32,f32>ret;
-	SelfAdjointEigenSolver<MatrixXf> eigensolver(
-			*belief.Covariance());
-	return ret;
+tuple<f32,f32,f32,f32> EkfOutput::Std()const{
+	Matrix2f std_xy;
+	std_xy << (*belief.Covariance())(0,0),
+	      (*belief.Covariance())(0,1),
+	      (*belief.Covariance())(1,0),
+	      (*belief.Covariance())(1,1);
+	SelfAdjointEigenSolver<MatrixXf> eigensolver(std_xy);
+	auto eigenvals=eigensolver.eigenvalues();
+	auto eigenvecs=eigensolver.eigenvectors();
+	f32 x(sqrt(eigenvals(0)));
+	f32 y(sqrt(eigenvals(1)));
+	f32 xy_angle(atan2(eigenvecs(1,0),eigenvecs(0,0)));
+	f32 theta(sqrt((*belief.Covariance())(2,2)));
+	return make_tuple(xy_angle,x,y,theta);
+}
+
+unique_ptr<PoseBase> EkfOutput::Pos() const{
+	PoseBase pos(*belief.Mean());
+	f32 offset(cfg.Sensor_Offset());
+	f32 x(pos.X()+offset*cos(pos.Yaw()));
+	f32 y(pos.Y()+offset*sin(pos.Yaw()));
+	return make_unique<PoseBase>(x,y,pos.Yaw());
 }
