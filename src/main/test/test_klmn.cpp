@@ -31,7 +31,7 @@ void Test::Test_Klmn(){
 		     0,pow(100,2),0,
 		     0,0,pow(((10.0 / 180.0) * M_PI),2);
         PoseBase pos(1850.0,1897.0,(213.0/180)*M_PI);
-        RobotConfig cfg(150.0,30.0,0.349);
+        RobotConfig cfg(155.0,30.0,0.349);
 	Matrix2f motion_covar;
 	f32 control_motion(0.35);
 	f32 control_turn(0.6);

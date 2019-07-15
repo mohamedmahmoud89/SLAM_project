@@ -16,6 +16,9 @@ public:
 		mean(make_shared<T>(init_state)),
 		covariance(make_shared<MatrixXf>(init_covar)){};
 	Gaussian()=delete;
+	Gaussian(const Gaussian& rhs):
+		mean(make_shared<T>(*rhs.mean)),
+		covariance(make_shared<MatrixXf>(*rhs.covariance)){};
 	shared_ptr<T> Mean()const noexcept{return mean;}
 	shared_ptr<MatrixXf> Covariance() const {return covariance;}
 };

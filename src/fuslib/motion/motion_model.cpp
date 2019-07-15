@@ -31,9 +31,15 @@ void MMSimple::UpdateC(
 
         f32 alpha((dist_r-dist_l)/width);
         f32 radius(dist_l/alpha);
-        f32 r_x(x-(offset*cos(yaw)));
-        f32 r_y(y-(offset*sin(yaw)));
-        f32 rot_rad(radius+(width/2.0));
+        // this lines are commented because the original 
+	// implementation for Unit A was tracking the scanner pos
+	// while the rest of the course is tracking the robot pos
+	//
+	//f32 r_x(x-(offset*cos(yaw)));
+        //f32 r_y(y-(offset*sin(yaw)));
+        f32 r_x(pos.X());
+	f32 r_y(pos.Y());
+	f32 rot_rad(radius+(width/2.0));
         f32 c_x(r_x-(rot_rad*sin(yaw)));
         f32 c_y(r_y+(rot_rad*cos(yaw)));
         yaw+=alpha;
@@ -42,8 +48,14 @@ void MMSimple::UpdateC(
         pos.set_yaw(yaw);
         c_x+=rot_rad*sin(yaw);
         c_y-=rot_rad*cos(yaw);
-        pos.set_x(c_x+(offset*cos(yaw)));
-        pos.set_y(c_y+(offset*sin(yaw)));
+        // this lines are commented because the original 
+	// implementation for Unit A was tracking the scanner pos
+	// while the rest of the course is tracking the robot pos
+	//
+        //pos.set_x(c_x+(offset*cos(yaw)));
+        //pos.set_y(c_y+(offset*sin(yaw)));
+	pos.set_x(c_x);
+	pos.set_y(c_y);
 }
 
 void MMSimple::UpdatePos(

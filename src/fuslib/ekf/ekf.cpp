@@ -42,10 +42,10 @@ shared_ptr<MatrixXf> Ekf::Compute_G_non_linear(
         f32 radius(dist_l/alpha);
 	(*ret)(0,0)=1;
 	(*ret)(0,1)=0;
-	(*ret)(0,2)=(radius+(width/2.0)*(cos(theta+alpha)-cos(theta)));
+	(*ret)(0,2)=(radius+(width/2.0))*(cos(theta+alpha)-cos(theta));
 	(*ret)(1,0)=0;
 	(*ret)(1,1)=1;
-	(*ret)(1,2)=(radius+(width/2.0)*(sin(theta+alpha)-sin(theta)));
+	(*ret)(1,2)=(radius+(width/2.0))*(sin(theta+alpha)-sin(theta));
 	(*ret)(2,0)=0;
 	(*ret)(2,1)=0;
 	(*ret)(2,2)=1;
@@ -92,7 +92,7 @@ shared_ptr<MatrixXf> Ekf::Compute_V(
 		(*ret)(0,1)+=(((r+l)/(2*(r-l)))*cos(theta+alpha));
 		(*ret)(1,1)=((-width*l)/pow(r-l,2))*
 			(-cos(theta+alpha)+cos(theta));
-		(*ret)(1,1)-=(((r+l)/(2*(r-l)))*sin(theta+alpha));
+		(*ret)(1,1)+=(((r+l)/(2*(r-l)))*sin(theta+alpha));
 		return ret;
 	}
 	(*ret)(0,0)=0.5*(cos(theta)+((l/width)*sin(theta)));

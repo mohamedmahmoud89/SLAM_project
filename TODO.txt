@@ -1,1 +1,2 @@
-1. test and bugfix the prediction step.
+1. implement the update step.
+2. review the design (specially using the smart pointers).
