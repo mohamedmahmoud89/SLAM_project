@@ -170,17 +170,37 @@ void Ekf::Update(
 		const Robot::Config& cfg){
 	shared_ptr<MatrixXf> Q(Compute_Q());
 	for(auto&assoc:assocs.assocs_t){
-		auto p_ref=assocs.stored_t.find(assoc.second)->second;	
+		auto p_ref=assocs.stored_t.find(
+				assoc.second)->second;	
+		auto p_meas=assocs.scanned_t.find(
+				assoc.first)->second;
+
 		shared_ptr<MatrixXf> H(Compute_H(
 					*belief.Mean(),
 					*p_ref,
 					cfg));
 
 		// K=Sigma*HT*(H*Sigma*HT+Q)⁻¹
-		
+		MatrixXf K(*belief.Covariance()*((*H).transpose()));
+		MatrixXf temp((*H)*(*(belief.Covariance()))*
+				(*H).transpose());	
+		temp+=(*Q);
+		K*=temp.inverse();
+
 		// Mu=Mu+K*(Z-h(Mu))
+		Vector2f Z;
+		Z << p_meas->R(),p_meas->Theta();
+		Vector2f h_Mu;
+		h_Mu << p_ref->R(),p_ref->Theta();
+		Vector3f innovation(K*(Z-h_Mu));
+		belief.Mean()->set_x(innovation(0));
+		belief.Mean()->set_y(innovation(1));
+		belief.Mean()->set_yaw(innovation(2));
 		
 		// Sigma=(I-K*H)Sigma
+		MatrixXf I(MatrixXf::Identity(3,3));
+		*(belief.Covariance())=(I-K*(*(H)))*
+			(*(belief.Covariance()));
 	}
 }
 
