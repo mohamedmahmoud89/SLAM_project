@@ -118,6 +118,36 @@ shared_ptr<MatrixXf> Ekf::Compute_SigmaCtrl(
 	return ret;
 }
 
+shared_ptr<MatrixXf> Ekf::Compute_H(
+                        const PoseBase& pos,
+                        const FeatBase& ref,
+                        const Robot::Config& cfg){
+	shared_ptr<MatrixXf>ret(make_shared<MatrixXf>(2,state_space));
+	f32 d(cfg.Sensor_Offset());
+	f32 r(ref.R());
+	f32 theta(pos.Yaw());
+	f32 scanner_x(
+                pos.X()+(d*cos(theta)));
+        f32 scanner_y(
+                pos.Y()+(d*sin(theta)));
+        f32 dx(ref.GX()-scanner_x);
+        f32 dy(ref.GY()-scanner_y);
+	(*ret)(0,0)=(-dx)/r;
+	(*ret)(0,1)=(-dy)/r;
+	(*ret)(0,2)=(d/r)*(dx*sin(theta)-dy*cos(theta));
+	(*ret)(1,0)=dy/pow(r,2);
+	(*ret)(1,1)=-dx/pow(r,2);
+	(*ret)(1,2)=((-d/pow(r,2))*(dx*cos(theta)+dy*sin(theta)))-1;
+	return ret;
+}
+
+shared_ptr<MatrixXf> Ekf::Compute_Q(){
+	shared_ptr<MatrixXf>ret(make_unique<MatrixXf>(2,2));
+	(*ret) << pow(meas_dist_std,2),0,
+		  0,pow(meas_ang_std,2);
+	return ret;
+}
+
 void Ekf::Predict(
 		const ControlBase& ctrl,
 		const Robot::Config& cfg){
@@ -135,12 +165,23 @@ void Ekf::Predict(
 	p_motion->UpdatePos(*p_pos,ctrl,cfg);
 }
 
-void Ekf::Update(const FeatAssoc& assocs){
-	// K=Sigma*HT*(H*Sigma*HT+Q)⁻¹
-	
-	// Mu=Mu+K*(Z-h(Mu))
-	
-	// Sigma=(I-K*H)Sigma
+void Ekf::Update(
+		const FeatAssoc& assocs,
+		const Robot::Config& cfg){
+	shared_ptr<MatrixXf> Q(Compute_Q());
+	for(auto&assoc:assocs.assocs_t){
+		auto p_ref=assocs.stored_t.find(assoc.second)->second;	
+		shared_ptr<MatrixXf> H(Compute_H(
+					*belief.Mean(),
+					*p_ref,
+					cfg));
+
+		// K=Sigma*HT*(H*Sigma*HT+Q)⁻¹
+		
+		// Mu=Mu+K*(Z-h(Mu))
+		
+		// Sigma=(I-K*H)Sigma
+	}
 }
 
 tuple<f32,f32,f32,f32> EkfOutput::Std()const{

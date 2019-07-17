@@ -35,7 +35,14 @@ void Test::Test_Klmn(){
 	Matrix2f motion_covar;
 	f32 control_motion(0.35);
 	f32 control_turn(0.6);
-	Ekf ekf(3,pos,covariance,control_motion,control_turn);
+	f32 meas_dist_std(200);
+	f32 meas_ang_std((15.0/180.0)*M_PI);
+	Ekf ekf(3,pos,
+		covariance,
+		control_motion,
+		control_turn,
+		meas_dist_std,
+		meas_ang_std);
 
         // read data
         pmfm->read("../data/robot4_motors.txt");
@@ -56,13 +63,21 @@ void Test::Test_Klmn(){
                 for(auto&i:vf.Data()){
                         // transform the features to world coords
 			// based on the robot pos
-			FeatureTransform(*i,*ekf.Belief().Mean(),cfg);
+			FeatureGlobalTransform(
+					*i,*ekf.Belief().Mean(),cfg);
                 }
 		unique_ptr<FeatAssoc> assocs(
 			FeatAssociate(vf.Data(),refs));
 
+		for(auto&i:refs){
+			// fill in the polar attributes of refs to
+			// be used in the update step
+			FeaturePolarTransform(
+					*i,*ekf.Belief().Mean(),cfg);
+		}
+
 		//update
-		ekf.Update(*assocs);
+		ekf.Update(*assocs,cfg);
 
 		//store outputs
 		EkfOutput log(ekf.Belief(),cfg);

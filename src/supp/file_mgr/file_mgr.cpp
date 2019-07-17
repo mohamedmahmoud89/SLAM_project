@@ -82,7 +82,8 @@ void RefLandmarkFileMgr::read_line(const string& line){
 	f32 x(stoi(temp));
 	ss >> temp; // y
 	f32 y(stoi(temp));
-	data.push_back(make_shared<Feature::FeatBase>(x,y,id++));
+	data.push_back(make_shared<Feature::FeatBase>(
+				0,0,0,0,x,y,id++));
 }
 
 RefLandmarkFileMgr* RefLandmarkFileMgr::get_instance() noexcept{

@@ -16,6 +16,8 @@ class Ekf{
 	u8 state_space;
 	f32 ctrl_motion;
 	f32 ctrl_turn;
+	f32 meas_dist_std;
+	f32 meas_ang_std;
 public:
 	Ekf()=delete;
 	Ekf(
@@ -23,15 +25,21 @@ public:
 		const PoseBase& init_state,
 		const MatrixXf& init_covar,
 		const f32 control_motion,
-		const f32 control_turn):
+		const f32 control_turn,
+		const f32 meas_dist_stddev,
+		const f32 meas_ang_stddev):
 		state_space(st_space),
 		belief(Gaussian<PoseBase>(init_state,init_covar)),
 		ctrl_motion(control_motion),
-		ctrl_turn(control_turn){}
+		ctrl_turn(control_turn),
+		meas_dist_std(meas_dist_stddev),
+		meas_ang_std(meas_ang_stddev){}
 	void Predict(
 		const ControlBase& ctrl,
 		const Robot::Config& cfg);
-	void Update(const FeatAssoc& assocs);
+	void Update(
+		const FeatAssoc& assocs,
+		const Robot::Config& cfg);
 	const Gaussian<PoseBase>& Belief() const
 	{
 		return belief;
@@ -61,7 +69,11 @@ private:
 			const ControlBase& ctrl,
 			const Robot::Config& cfg);
 	
-	//shared_ptr<MatrixXf> Compute_V();	
+	shared_ptr<MatrixXf> Compute_H(
+			const PoseBase& pos,
+			const FeatBase& ref,
+			const Robot::Config& cfg);
+	shared_ptr<MatrixXf> Compute_Q();	
 };
 
 class EkfOutput{
