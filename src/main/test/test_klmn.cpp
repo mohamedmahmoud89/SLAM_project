@@ -60,20 +60,20 @@ void Test::Test_Klmn(){
                 //associate
                 FeatList vf(plfx->Feature_Extract(
                                 scans[i],*s_cfg));
-                for(auto&i:vf.Data()){
+                for(auto&feat:vf.Data()){
                         // transform the features to world coords
 			// based on the robot pos
 			FeatureGlobalTransform(
-					*i,*ekf.Belief().Mean(),cfg);
+					*feat,*ekf.Belief().Mean(),cfg);
                 }
 		unique_ptr<FeatAssoc> assocs(
 			FeatAssociate(vf.Data(),refs));
 
-		for(auto&i:refs){
+		for(auto&ref:refs){
 			// fill in the polar attributes of refs to
 			// be used in the update step
 			FeaturePolarTransform(
-					*i,*ekf.Belief().Mean(),cfg);
+				*ref,*ekf.Belief().Mean(),cfg);
 		}
 
 		//update

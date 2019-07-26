@@ -34,7 +34,8 @@ void Feature::FeaturePolarTransform(
 	f32 dy(feat.GY()-scanner_y);
 	f32 r(sqrt(pow(dx,2)+pow(dy,2)));
 	f32 theta(atan2(dy,dx)-coord.Yaw()+M_PI);
-	while(theta>2*M_PI)theta-=(2*M_PI);
+	//while(theta>=2*M_PI)theta-=(2*M_PI);
+	theta=fmod(theta,2*M_PI);
 	theta-=M_PI;
 	feat.Set_R(r);
 	feat.Set_Theta(theta);
@@ -54,9 +55,9 @@ unique_ptr<FeatAssoc> Feature::FeatAssociate(
 	};
 	for_each(scanned.begin(),scanned.end(),lambda_scan);
 	for_each(stored.begin() ,stored.end(), lambda_store);
-	f32 min_squared(pow(max_ref_dist,2));
 	for(auto&sc_ft:scanned){
 		si32 id(-1);
+		f32 min_squared(pow(max_ref_dist,2));
 		for(auto&st_ft:stored){
 			f32 dist_squared(
 				pow(sc_ft->GX()-st_ft->GX(),2)+

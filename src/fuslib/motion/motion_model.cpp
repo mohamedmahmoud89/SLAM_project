@@ -43,9 +43,10 @@ void MMSimple::UpdateC(
         f32 c_x(r_x-(rot_rad*sin(yaw)));
         f32 c_y(r_y+(rot_rad*cos(yaw)));
         yaw+=alpha;
-        while(yaw>=2*M_PI)
-                yaw-=2*M_PI;
-        pos.set_yaw(yaw);
+        //while(yaw>=2*M_PI)
+        //        yaw-=2*M_PI;
+        yaw=fmod(yaw,2*M_PI);
+	pos.set_yaw(yaw);
         c_x+=rot_rad*sin(yaw);
         c_y-=rot_rad*cos(yaw);
         // this lines are commented because the original 

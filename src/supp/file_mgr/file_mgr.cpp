@@ -36,12 +36,11 @@ void MotorFileMgr::read_line(const string& line){
         if(is_first_Tick){
 		is_first_Tick=false;
 		last_Tick=current;
-		return;
 	}
-	ControlBase temp(
+	ControlBase delta(
 			current.Left_Tick()-last_Tick.Left_Tick(),
 			current.Right_Tick()-last_Tick.Right_Tick());
-	data.push_back(temp);
+	data.push_back(delta);
 	last_Tick=current;
 }
 

@@ -76,7 +76,6 @@ shared_ptr<MatrixXf> Ekf::Compute_V(
         f32 width(cfg.Width());
 	f32 theta(pos.Yaw());
         f32 alpha((r-l)/width);
-        f32 radius(l/alpha);
 	(*ret)(2,0)=-1.0/width;
 	(*ret)(2,1)=1.0/width;
 	if(ctrl.Right_Tick()!=ctrl.Left_Tick()){
@@ -192,10 +191,18 @@ void Ekf::Update(
 		Z << p_meas->R(),p_meas->Theta();
 		Vector2f h_Mu;
 		h_Mu << p_ref->R(),p_ref->Theta();
-		Vector3f innovation(K*(Z-h_Mu));
-		belief.Mean()->set_x(innovation(0));
-		belief.Mean()->set_y(innovation(1));
-		belief.Mean()->set_yaw(innovation(2));
+		Vector2f innovation(Z-h_Mu);
+		innovation(1)=innovation(1)+M_PI;
+		//while(innovation(1)>=2*M_PI)innovation(1)-=2*M_PI;
+		innovation(1)=fmod(innovation(1),2*M_PI);
+		innovation(1)-=M_PI;
+		Vector3f K_innovation(K*innovation);
+		belief.Mean()->set_x(belief.Mean()->X()+
+				K_innovation(0));
+		belief.Mean()->set_y(belief.Mean()->Y()+
+				K_innovation(1));
+		belief.Mean()->set_yaw(belief.Mean()->Yaw()+
+				K_innovation(2));
 		
 		// Sigma=(I-K*H)Sigma
 		MatrixXf I(MatrixXf::Identity(3,3));
