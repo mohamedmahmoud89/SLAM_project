@@ -80,12 +80,12 @@ unique_ptr<FeatAssoc> FeatAssociate(
 void FeaturePolarTransform(
 		FeatBase& feat,
 		const PoseBase& coord,
-		const Robot::RobotConfig& cfg);
+		const Robot::Config& cfg);
 
 void FeatureGlobalTransform(
 		FeatBase& feat,
 		const PoseBase& coord,
-		const Robot::RobotConfig& cfg);
+		const Robot::Config& cfg);
 };
 
 #endif

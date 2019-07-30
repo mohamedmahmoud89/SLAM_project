@@ -69,12 +69,12 @@ void Test::Test_Klmn(){
 		unique_ptr<FeatAssoc> assocs(
 			FeatAssociate(vf.Data(),refs));
 
-		for(auto&ref:refs){
+		/*for(auto&ref:refs){
 			// fill in the polar attributes of refs to
 			// be used in the update step
 			FeaturePolarTransform(
 				*ref,*ekf.Belief().Mean(),cfg);
-		}
+		}*/
 
 		//update
 		ekf.Update(*assocs,cfg);

@@ -133,14 +133,16 @@ void EkfFileMgr::write_line(
 		ofstream& ofs,
 		const EkfOutput& out) const{
 	ofs<<"F ";
-	ofs<<out.Pos()->X()<<" ";	
-	ofs<<out.Pos()->Y()<<" ";
-	ofs<<out.Pos()->Yaw()<<" ";
+	auto pos(out.Pos());
+	auto std(out.Std());
+	ofs<<pos->X()<<" ";	
+	ofs<<pos->Y()<<" ";
+	ofs<<pos->Yaw()<<" ";
 	ofs<<endl;
 	ofs<<"E ";
-	ofs<<get<0>(out.Std())<<" ";
-	ofs<<get<1>(out.Std())<<" ";
-	ofs<<get<2>(out.Std())<<" ";
-	ofs<<get<3>(out.Std());
+	ofs<<get<0>(std)<<" ";
+	ofs<<get<1>(std)<<" ";
+	ofs<<get<2>(std)<<" ";
+	ofs<<get<3>(std);
 	ofs<<endl;
 }

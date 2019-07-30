@@ -9,7 +9,7 @@ f32 max_ref_dist=300;
 void Feature::FeatureGlobalTransform(
 		FeatBase& feat,
 		const PoseBase& coord,
-		const RobotConfig& cfg){
+		const Config& cfg){
 	f32 scanner_x(
 		coord.X()+(cfg.Sensor_Offset()*cos(coord.Yaw())));
 	f32 scanner_y(
@@ -25,7 +25,7 @@ void Feature::FeatureGlobalTransform(
 void Feature::FeaturePolarTransform(
 		FeatBase& feat,
 		const PoseBase& coord,
-		const RobotConfig& cfg){	
+		const Config& cfg){	
 	f32 scanner_x(
 		coord.X()+(cfg.Sensor_Offset()*cos(coord.Yaw())));
 	f32 scanner_y(

@@ -174,6 +174,9 @@ void Ekf::Update(
 		auto p_meas=assocs.scanned_t.find(
 				assoc.first)->second;
 
+		FeaturePolarTransform(
+                                *p_ref,*belief.Mean(),cfg);
+
 		shared_ptr<MatrixXf> H(Compute_H(
 					*belief.Mean(),
 					*p_ref,
@@ -220,9 +223,9 @@ tuple<f32,f32,f32,f32> EkfOutput::Std()const{
 	SelfAdjointEigenSolver<MatrixXf> eigensolver(std_xy);
 	auto eigenvals=eigensolver.eigenvalues();
 	auto eigenvecs=eigensolver.eigenvectors();
-	f32 x(sqrt(eigenvals(0)));
-	f32 y(sqrt(eigenvals(1)));
-	f32 xy_angle(atan2(eigenvecs(1,0),eigenvecs(0,0)));
+	f32 x(sqrt(eigenvals(1)));
+	f32 y(sqrt(eigenvals(0)));
+	f32 xy_angle(atan2(eigenvecs(1,1),eigenvecs(0,1)));
 	f32 theta(sqrt((*belief.Covariance())(2,2)));
 	return make_tuple(xy_angle,x,y,theta);
 }
