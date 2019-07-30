@@ -69,18 +69,12 @@ void Test::Test_Klmn(){
 		unique_ptr<FeatAssoc> assocs(
 			FeatAssociate(vf.Data(),refs));
 
-		/*for(auto&ref:refs){
-			// fill in the polar attributes of refs to
-			// be used in the update step
-			FeaturePolarTransform(
-				*ref,*ekf.Belief().Mean(),cfg);
-		}*/
-
 		//update
 		ekf.Update(*assocs,cfg);
 
 		//store outputs
-		EkfOutput log(ekf.Belief(),cfg);
+		auto refs_vec(ExtractRefFeatures(*assocs));
+		EkfOutput log(ekf.Belief(),cfg,refs_vec);
 		efm->add_sample(log);
         }
 	// write output file

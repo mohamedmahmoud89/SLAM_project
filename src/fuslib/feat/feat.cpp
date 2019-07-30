@@ -74,3 +74,14 @@ unique_ptr<FeatAssoc> Feature::FeatAssociate(
 	return p_assoc;
 }
 
+vector<FeatBase> Feature::ExtractRefFeatures(
+		const FeatAssoc& assocs){
+	vector<FeatBase>ret;
+	for(auto& assoc:assocs.assocs_t){
+		auto p_ref=assocs.stored_t.find(
+                                assoc.second)->second;
+		FeatBase temp(*p_ref);
+		ret.push_back(temp);
+	}
+	return ret;
+}

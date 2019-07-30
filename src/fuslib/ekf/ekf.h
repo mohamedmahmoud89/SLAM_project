@@ -79,14 +79,18 @@ private:
 class EkfOutput{
         Gaussian<PoseBase> belief;
         Robot::RobotConfig cfg;
+	vector<FeatBase> refs;
 public:  
 	EkfOutput()=delete;
 	EkfOutput(
                         const Gaussian<PoseBase>&b,
-                        const Robot::RobotConfig& c):
+                        const Robot::RobotConfig& c,
+			const vector<FeatBase>&r):
                 belief(b),
-                cfg(c){}
+                cfg(c),
+		refs(r){}
 	tuple<f32,f32,f32,f32> Std() const;
 	unique_ptr<PoseBase> Pos() const;
+	vector<FeatBase> Refs() const{return refs;}
 };
 #endif

@@ -86,6 +86,8 @@ void FeatureGlobalTransform(
 		FeatBase& feat,
 		const PoseBase& coord,
 		const Robot::Config& cfg);
+
+vector<FeatBase> ExtractRefFeatures(const FeatAssoc& assocs);
 };
 
 #endif

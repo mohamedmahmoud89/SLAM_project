@@ -135,6 +135,7 @@ void EkfFileMgr::write_line(
 	ofs<<"F ";
 	auto pos(out.Pos());
 	auto std(out.Std());
+	auto refs(out.Refs());
 	ofs<<pos->X()<<" ";	
 	ofs<<pos->Y()<<" ";
 	ofs<<pos->Yaw()<<" ";
@@ -144,5 +145,11 @@ void EkfFileMgr::write_line(
 	ofs<<get<1>(std)<<" ";
 	ofs<<get<2>(std)<<" ";
 	ofs<<get<3>(std);
+	ofs<<endl;
+	ofs<<"W C ";
+	for(auto&i:refs){
+		ofs<<i.GX()<<" ";
+		ofs<<i.GY()<<" ";
+	}
 	ofs<<endl;
 }
