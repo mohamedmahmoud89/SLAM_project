@@ -9,6 +9,7 @@
 #include"scan.h"
 #include"feat.h"
 #include "ekf.h"
+#include "pf.h"
 using namespace std;
 using namespace Feature;
 template<typename T>
@@ -67,7 +68,11 @@ private:
 template<typename T>
 class WriteFileMgr{
 public:
+	WriteFileMgr()=default;
+	WriteFileMgr(const u16 size){data.reserve(size);}
+	virtual ~WriteFileMgr(){}
 	virtual void add_sample(const T& sample);
+	virtual void add_sample(T&& sample);
 	// here we can move write() to a base class and privately
 	// inhirint it to avoid code bloat
 	virtual void write(const string& filename) const;
@@ -92,5 +97,14 @@ class EkfFileMgr : public WriteFileMgr<EkfOutput>{
 	void write_line(
 			ofstream& ofs,
 			const EkfOutput& out)const override;
+};
+
+class PfFileMgr : public WriteFileMgr<PfOutput>{
+	void write_line(
+			ofstream& ofs,
+			const PfOutput& out)const override;
+public:
+	PfFileMgr()=default;
+	PfFileMgr(const u16 size):WriteFileMgr(size){}
 };
 #endif

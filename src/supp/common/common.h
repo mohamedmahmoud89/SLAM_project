@@ -16,6 +16,9 @@ using f64=double;
 template<typename T>
 using SmrtPtrVec=vector<shared_ptr<T>>;
 
+template<typename T>
+using ConstUnqPtrVec=vector<unique_ptr<const T>>;
+
 class PoseBase{
 protected:
 	f32 x{0.0};

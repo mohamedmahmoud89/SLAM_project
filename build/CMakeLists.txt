@@ -11,6 +11,7 @@ include_directories(
 	../src/fuslib/scan
 	../src/fuslib/feat
 	../src/fuslib/ekf
+	../src/fuslib/pf
 	../src/odom
 	../src/lfx
 	../src/main/test
@@ -24,8 +25,10 @@ add_executable(SLAM
 	../src/fuslib/feat/feat.cpp
 	../src/fuslib/motion/motion_model.cpp
 	../src/fuslib/ekf/ekf.cpp
+	../src/fuslib/pf/pf.cpp
 	../src/main/main.cpp
 	../src/main/test/test_klmn.cpp
 	../src/main/test/test_odom.cpp
 	../src/main/test/test_scan.cpp
+	../src/main/test/test_pf.cpp
 )

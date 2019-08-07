@@ -10,8 +10,11 @@ int main(){
 	//Test_Scan();
 	
 	// KLMN test
-	Test_Klmn();
-
+	//Test_Klmn();
+	
+	
+	// KLMN test
+	Test_Pf();
 	return 0;
 }
 

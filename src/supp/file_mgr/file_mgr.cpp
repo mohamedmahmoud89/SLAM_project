@@ -95,6 +95,10 @@ template<typename T>void WriteFileMgr<T>::add_sample(const T& sample){
 	data.push_back(sample);
 }
 
+template<typename T>void WriteFileMgr<T>::add_sample(T&& sample){
+	data.push_back(forward<T>(sample));
+}
+
 template<typename T>void WriteFileMgr<T>::write(
 		const string& filename) const
 {
@@ -150,6 +154,18 @@ void EkfFileMgr::write_line(
 	for(auto&i:refs){
 		ofs<<i.GX()<<" ";
 		ofs<<i.GY()<<" ";
+	}
+	ofs<<endl;
+}
+
+void PfFileMgr::write_line(
+		ofstream& ofs,
+                const PfOutput& out) const {
+	ofs << "PA ";
+	for(auto& i:out.particles){
+		ofs<<i->X()<<" ";
+		ofs<<i->Y()<<" ";
+		ofs<<i->Yaw()<<" ";
 	}
 	ofs<<endl;
 }
