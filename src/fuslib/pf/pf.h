@@ -31,6 +31,10 @@ public:
 		const ControlBase& ctrl,
 		const Robot::Config& cfg);
 	SmrtPtrVec<PoseBase>& Particles(){return particles;}
+private:
+	pair<f32,f32> Compute_SigmaCtrl(
+                        const ControlBase& ctrl,
+                        const Robot::Config& cfg);
 };
 
 class PfOutput{
