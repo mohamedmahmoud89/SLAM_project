@@ -3,10 +3,12 @@
 #include "common.h"
 #include "motion_model.h"
 #include "ctrl_data.h"
+#include "feat.h"
 #include <vector>
 
 using namespace std;
 using namespace Motion;
+using namespace Feature;
 
 class ParticleFilter{
 	SmrtPtrVec<PoseBase> particles;
@@ -30,11 +32,21 @@ public:
 	void Predict(
 		const ControlBase& ctrl,
 		const Robot::Config& cfg);
+	typedef SmrtPtrVec<FeatBase> RefList;
+	void Update(
+		FeatList& feats,
+		RefList& refs,
+		const Robot::Config& cfg);
 	SmrtPtrVec<PoseBase>& Particles(){return particles;}
 private:
 	pair<f32,f32> Compute_SigmaCtrl(
                         const ControlBase& ctrl,
                         const Robot::Config& cfg);
+	vector<f32> Calc_ImpWeights(
+			FeatList& feats,
+			RefList& refs,
+			const Robot::Config& cfg);
+	void Resample(const vector<f32>& weights);
 };
 
 class PfOutput{

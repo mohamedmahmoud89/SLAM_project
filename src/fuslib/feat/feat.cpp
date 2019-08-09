@@ -5,7 +5,6 @@
 using namespace std;
 using namespace Feature;
 using namespace Robot;
-f32 max_ref_dist=300;
 void Feature::FeatureGlobalTransform(
 		FeatBase& feat,
 		const PoseBase& coord,
@@ -43,7 +42,8 @@ void Feature::FeaturePolarTransform(
 
 unique_ptr<FeatAssoc> Feature::FeatAssociate(
 		const SmrtPtrVec<FeatBase>& scanned,
-		const SmrtPtrVec<FeatBase>& stored){
+		const SmrtPtrVec<FeatBase>& stored,
+		const f32 max_ref_dist){
 	unique_ptr<FeatAssoc> p_assoc(make_unique<FeatAssoc>());
 	auto lambda_scan=[&p_assoc](const shared_ptr<FeatBase>& pf){
 		p_assoc->scanned_t.insert(
@@ -57,9 +57,10 @@ unique_ptr<FeatAssoc> Feature::FeatAssociate(
 	for_each(stored.begin() ,stored.end(), lambda_store);
 	for(auto&sc_ft:scanned){
 		si32 id(-1);
-		f32 min_squared(pow(max_ref_dist,2));
+		f64 min_squared(pow(max_ref_dist,2));
+		//f64 min_squared(numeric_limits<long double>::max());
 		for(auto&st_ft:stored){
-			f32 dist_squared(
+			f64 dist_squared(
 				pow(sc_ft->GX()-st_ft->GX(),2)+
 				pow(sc_ft->GY()-st_ft->GY(),2));
 			if(dist_squared<min_squared){

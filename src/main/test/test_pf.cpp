@@ -14,8 +14,7 @@ void Test::Test_Pf(){
         MotorFileMgr* pmfm=MotorFileMgr::get_instance();
         //scan data definitions
         ScanFileMgr* psfm(ScanFileMgr::get_instance());
-        unique_ptr<Scan::ScanConfig>s_cfg(
-                make_unique<Scan::ScanConfig>(20,100,90));
+        Scan::ScanConfig s_cfg(20,100,90);
         unique_ptr<LidarFeatExBase>plfx(
                 make_unique<LidarFeatExBase>());
         //ref landmark data definitions
@@ -68,8 +67,15 @@ void Test::Test_Pf(){
 
         // pf loop
 	for(int i=0;i<ticks.size();++i){
+		// predict
 		pf.Predict(ticks[i],cfg);
 		
+		// update
+		FeatList feats(plfx->Feature_Extract(
+                                scans[i],s_cfg));
+
+		pf.Update(feats,refs,cfg);
+
 		//store outputs
 		pfm->add_sample(PfOutput(pf.Particles(),cfg));	
 	}

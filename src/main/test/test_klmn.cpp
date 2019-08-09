@@ -37,6 +37,7 @@ void Test::Test_Klmn(){
 	f32 control_turn(0.6);
 	f32 meas_dist_std(200);
 	f32 meas_ang_std((15.0/180.0)*M_PI);
+	f32 max_ref_dist(300);
 	Ekf ekf(3,pos,
 		covariance,
 		control_motion,
@@ -64,10 +65,12 @@ void Test::Test_Klmn(){
                         // transform the features to world coords
 			// based on the robot pos
 			FeatureGlobalTransform(
-					*feat,*ekf.Belief().Mean(),cfg);
+					*feat,
+					*ekf.Belief().Mean(),
+					cfg);
                 }
 		unique_ptr<FeatAssoc> assocs(
-			FeatAssociate(vf.Data(),refs));
+			FeatAssociate(vf.Data(),refs,max_ref_dist));
 
 		//update
 		ekf.Update(*assocs,cfg);

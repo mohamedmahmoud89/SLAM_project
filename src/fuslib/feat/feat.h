@@ -74,7 +74,8 @@ class FeatAssoc{
 
 unique_ptr<FeatAssoc> FeatAssociate(
                 const SmrtPtrVec<FeatBase>& scanned,
-                const SmrtPtrVec<FeatBase>& stored);
+                const SmrtPtrVec<FeatBase>& stored,
+		const f32 max_ref_dist);
 
 
 void FeaturePolarTransform(
