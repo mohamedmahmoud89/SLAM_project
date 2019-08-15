@@ -63,6 +63,8 @@ unique_ptr<FeatAssoc> Feature::FeatAssociate(
 			f64 dist_squared(
 				pow(sc_ft->GX()-st_ft->GX(),2)+
 				pow(sc_ft->GY()-st_ft->GY(),2));
+			//cout<<"dist_sq = "<<dist_squared<<endl;
+			//cout<<"min_sq = "<<min_squared<<endl;	
 			if(dist_squared<min_squared){
 				min_squared=dist_squared;
 				id=st_ft->Id();

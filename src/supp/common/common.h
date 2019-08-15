@@ -2,6 +2,7 @@
 #define COMMON_H
 #include<vector>
 #include<memory>
+#include<cmath>
 using namespace std;
 
 using u8=unsigned char;
@@ -49,5 +50,11 @@ public:
 	}
 };
 
+inline f32 normal_pdf(f32 x, f32 m, f32 s)
+{
+    static const f32 inv_sqrt_2pi = 0.3989422804014327;
+    f32 a = (x - m) / s;
 
+    return inv_sqrt_2pi / s * std::exp(-0.5f * a * a);
+}
 #endif

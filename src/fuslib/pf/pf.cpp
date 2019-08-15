@@ -1,7 +1,7 @@
 #include "pf.h"
 #include <random>
 #include <cassert>
-
+#include "common.h"
 using namespace std;
 
 PfOutput::PfOutput(
@@ -46,13 +46,16 @@ vector<f32> ParticleFilter::Calc_ImpWeights(
 		const PoseBase particle(*pp);
 		for(auto&feat:feats.Data()){
                         // transform the features to world coords
-                        // based on the robot pos
+                        // based on the particle pos
                         FeatureGlobalTransform(
                                         *feat,particle,cfg);
                 }
 		unique_ptr<FeatAssoc> assocs(
-                        FeatAssociate(feats.Data(),refs,max_ref_dist));
-		assert(assocs->assocs_t.size()==num_landmarks);
+                        FeatAssociate(
+				feats.Data(),
+				refs,
+				max_ref_dist));
+		//assert(assocs->assocs_t.size()==num_landmarks);
 		f32 weight(1);
 		for(auto&assoc:assocs->assocs_t){
 			auto p_ref=assocs->stored_t.find(
@@ -64,7 +67,17 @@ vector<f32> ParticleFilter::Calc_ImpWeights(
 					*p_ref,particle,cfg);
 
 			// sample pdf using polar coords diff
-
+			f32 delta_dst(p_ref->R()-p_meas->R());
+			f32 delta_ang(p_ref->Theta()-p_meas->Theta());
+			
+			//ang normalization
+			delta_ang+=M_PI;
+			delta_ang=fmod(delta_ang,2*M_PI);
+			delta_ang-=M_PI;
+			
+			weight*=
+				normal_pdf(delta_dst,0,meas_dist_std)*
+				normal_pdf(delta_ang,0,meas_ang_std);
 		}
 		ret.push_back(weight);
 	}
@@ -72,7 +85,23 @@ vector<f32> ParticleFilter::Calc_ImpWeights(
 }
 
 void ParticleFilter::Resample(const vector<f32>& weights){
+	SmrtPtrVec<PoseBase>resampled;
+	u16 N(particles.size());
+	u16 idx(rand()%N);
+	f32 beta(0);
+	f32 mw(*max_element(weights.begin(),weights.end()));
 
+	for(u16 i=0;i<N;++i){
+		f32 random_num(static_cast<f32>(rand())/RAND_MAX);
+		beta+=(random_num*2*mw);
+		while(beta>weights[idx]){
+			beta-=weights[idx];
+			idx=(idx+1)%N;
+		}
+		resampled.push_back(particles[idx]);
+	}
+	particles.clear();
+	particles=move(resampled);
 }
 
 void ParticleFilter::Predict(
