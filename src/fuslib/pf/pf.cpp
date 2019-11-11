@@ -41,6 +41,7 @@ vector<f32> ParticleFilter::Calc_ImpWeights(
                         const Robot::Config& cfg){
 	vector<f32>ret;
 	const f32 max_ref_dist(numeric_limits<f32>::max());
+	//const f32 max_ref_dist(2000);
 	const u8 num_landmarks(6);
 	for(auto& pp:particles){
 		const PoseBase particle(*pp);
@@ -55,7 +56,7 @@ vector<f32> ParticleFilter::Calc_ImpWeights(
 				feats.Data(),
 				refs,
 				max_ref_dist));
-		//assert(assocs->assocs_t.size()==num_landmarks);
+	//	assert(assocs->assocs_t.size()==num_landmarks);
 		f32 weight(1);
 		for(auto&assoc:assocs->assocs_t){
 			auto p_ref=assocs->stored_t.find(
@@ -71,13 +72,15 @@ vector<f32> ParticleFilter::Calc_ImpWeights(
 			f32 delta_ang(p_ref->Theta()-p_meas->Theta());
 			
 			//ang normalization
-			delta_ang+=M_PI;
+			//delta_ang=std::abs(delta_ang);
+			f32 sign(delta_ang/fabs(delta_ang));
+			delta_ang+=sign*M_PI;
 			delta_ang=fmod(delta_ang,2*M_PI);
-			delta_ang-=M_PI;
+			delta_ang-=sign*M_PI;
 			
-			weight*=
-				normal_pdf(delta_dst,0,meas_dist_std)*
-				normal_pdf(delta_ang,0,meas_ang_std);
+			f32 nd1(normal_pdf(delta_dst,0,meas_dist_std));
+			f32 nd2(normal_pdf(delta_ang,0,meas_ang_std));
+			weight*=(nd1*nd2);
 		}
 		ret.push_back(weight);
 	}

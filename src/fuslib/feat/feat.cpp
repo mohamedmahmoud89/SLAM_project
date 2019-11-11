@@ -32,10 +32,12 @@ void Feature::FeaturePolarTransform(
 	f32 dx(feat.GX()-scanner_x);
 	f32 dy(feat.GY()-scanner_y);
 	f32 r(sqrt(pow(dx,2)+pow(dy,2)));
-	f32 theta(atan2(dy,dx)-coord.Yaw()+M_PI);
+	f32 theta(atan2(dy,dx)-coord.Yaw());
+	f32 sign(theta/fabs(theta));
+	theta+=(sign*M_PI);
 	//while(theta>=2*M_PI)theta-=(2*M_PI);
 	theta=fmod(theta,2*M_PI);
-	theta-=M_PI;
+	theta-=(sign*M_PI);
 	feat.Set_R(r);
 	feat.Set_Theta(theta);
 }

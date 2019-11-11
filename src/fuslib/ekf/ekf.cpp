@@ -195,10 +195,11 @@ void Ekf::Update(
 		Vector2f h_Mu;
 		h_Mu << p_ref->R(),p_ref->Theta();
 		Vector2f innovation(Z-h_Mu);
-		innovation(1)=innovation(1)+M_PI;
+		f32 sign(innovation(1)/fabs(innovation(1)));
+		innovation(1)=innovation(1)+(sign*M_PI);
 		//while(innovation(1)>=2*M_PI)innovation(1)-=2*M_PI;
 		innovation(1)=fmod(innovation(1),2*M_PI);
-		innovation(1)-=M_PI;
+		innovation(1)-=(sign*M_PI);
 		Vector3f K_innovation(K*innovation);
 		belief.Mean()->set_x(belief.Mean()->X()+
 				K_innovation(0));
