@@ -41,7 +41,6 @@ vector<f32> ParticleFilter::Calc_ImpWeights(
                         const Robot::Config& cfg){
 	vector<f32>ret;
 	const f32 max_ref_dist(numeric_limits<f32>::max());
-	//const f32 max_ref_dist(2000);
 	const u8 num_landmarks(6);
 	for(auto& pp:particles){
 		const PoseBase particle(*pp);
@@ -72,7 +71,6 @@ vector<f32> ParticleFilter::Calc_ImpWeights(
 			f32 delta_ang(p_ref->Theta()-p_meas->Theta());
 			
 			//ang normalization
-			//delta_ang=std::abs(delta_ang);
 			f32 sign(delta_ang/fabs(delta_ang));
 			delta_ang+=sign*M_PI;
 			delta_ang=fmod(delta_ang,2*M_PI);
@@ -96,7 +94,7 @@ void ParticleFilter::Resample(const vector<f32>& weights){
 
 	for(u16 i=0;i<N;++i){
 		f32 random_num(static_cast<f32>(rand())/RAND_MAX);
-		beta+=(random_num*2*mw);
+		beta=(random_num*2*mw);
 		while(beta>weights[idx]){
 			beta-=weights[idx];
 			idx=(idx+1)%N;

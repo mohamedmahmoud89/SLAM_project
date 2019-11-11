@@ -28,7 +28,7 @@ void Test::Test_Pf(){
         f32 control_turn(0.6);
         f32 meas_dist_std(200);
         f32 meas_ang_std((15.0/180.0)*M_PI);
-	u16 num_particles(10);
+	u16 num_particles(300);
 	SmrtPtrVec<PoseBase>vec;
 
 	// random engine
@@ -67,7 +67,8 @@ void Test::Test_Pf(){
 
         // pf loop
 	for(int i=0;i<ticks.size();++i){
-		if(ticks[i].Right_Tick()!=0&&ticks[i].Left_Tick()!=0){
+		//if(ticks[i].Right_Tick()!=0&&ticks[i].Left_Tick()!=0)
+		{
 			// predict
 			pf.Predict(ticks[i],cfg);
 			
