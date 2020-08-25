@@ -24,11 +24,11 @@ void Test::Test_Pf(){
 	PoseBase pos_mean(1850.0,1897.0,(213.0/180)*M_PI);
         PoseBase pos_std(100,100,((10.0 / 180.0) * M_PI));
 	RobotConfig cfg(155.0,30.0,0.349);
-        f32 control_motion(0.35);
-        f32 control_turn(0.6);
+        f32 control_motion(0.05);
+        f32 control_turn(0.1);
         f32 meas_dist_std(200);
         f32 meas_ang_std((15.0/180.0)*M_PI);
-	u16 num_particles(300);
+	u16 num_particles(500);
 	SmrtPtrVec<PoseBase>vec;
 
 	// random engine
@@ -67,7 +67,7 @@ void Test::Test_Pf(){
 
         // pf loop
 	for(int i=0;i<ticks.size();++i){
-		//if(ticks[i].Right_Tick()!=0&&ticks[i].Left_Tick()!=0)
+		if(ticks[i].Right_Tick()!=0&&ticks[i].Left_Tick()!=0)
 		{
 			// predict
 			pf.Predict(ticks[i],cfg);

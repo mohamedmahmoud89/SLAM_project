@@ -99,7 +99,16 @@ void ParticleFilter::Resample(const vector<f32>& weights){
 			beta-=weights[idx];
 			idx=(idx+1)%N;
 		}
-		resampled.push_back(particles[idx]);
+		// sample new particles around the one of chosen index
+		random_device rd;
+		default_random_engine gen(rd());
+		normal_distribution<f32> dist_x(particles[idx]->X(),20.0);
+		normal_distribution<f32> dist_y(particles[idx]->Y(),20.0);
+		normal_distribution<f32> dist_yaw(particles[idx]->Yaw(),((2.0 / 180.0) * M_PI));
+		f32 x(dist_x(gen));
+                f32 y(dist_y(gen));
+                f32 yaw(dist_yaw(gen));
+		resampled.push_back(make_shared<PoseBase>(x,y,yaw));
 	}
 	particles.clear();
 	particles=move(resampled);
