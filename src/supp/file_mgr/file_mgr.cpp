@@ -168,4 +168,15 @@ void PfFileMgr::write_line(
 		ofs<<i->Yaw()<<" ";
 	}
 	ofs<<endl;
+	ofs <<"F ";
+	ofs<<out.mean->X()+(out.cfg->Sensor_Offset()*cos(out.mean->Yaw()))<<" ";
+	ofs<<out.mean->Y()+(out.cfg->Sensor_Offset()*sin(out.mean->Yaw()))<<" ";
+	ofs<<out.mean->Yaw();
+	ofs<<endl;
+	ofs<<"E ";
+	ofs<<get<0>(out.std)<<" ";
+        ofs<<get<1>(out.std)<<" ";
+        ofs<<get<2>(out.std)<<" ";
+        ofs<<get<3>(out.std);
+        ofs<<endl;
 }

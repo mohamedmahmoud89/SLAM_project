@@ -34,11 +34,12 @@ void Test::Test_Pf(){
 	// random engine
 	random_device rd;
 	default_random_engine gen(rd());
-	normal_distribution<f32> dist_x(pos_mean.X(),pos_std.X());
-	normal_distribution<f32> dist_y(pos_mean.Y(),pos_std.Y());
-	normal_distribution<f32> dist_yaw(
-			pos_mean.Yaw(),
-			pos_std.Yaw());
+	//normal_distribution<f32> dist_x(pos_mean.X(),pos_std.X());
+	//normal_distribution<f32> dist_y(pos_mean.Y(),pos_std.Y());
+	//normal_distribution<f32> dist_yaw(pos_mean.Yaw(),pos_std.Yaw());
+	uniform_real_distribution<f32> dist_x(0,2000);
+	uniform_real_distribution<f32> dist_y(0,2000);
+	uniform_real_distribution<f32> dist_yaw(-M_PI,M_PI);
 	for(u16 i=0;i<num_particles;++i){
 		f32 x(dist_x(gen));
 		f32 y(dist_y(gen));

@@ -7,10 +7,53 @@ using namespace std;
 PfOutput::PfOutput(
 		const SmrtPtrVec<PoseBase>& pars,
                 const RobotConfig& in_cfg){
+	// cfg
 	cfg=make_unique<RobotConfig>(in_cfg);
+	f32 mean_x(0),mean_y(0),mean_cos(0),mean_sin(0);
+	
+	// particles
 	for(auto& i:pars){
 		particles.push_back(make_unique<PoseBase>(*i));
-	}	
+		mean_x+=i->X();
+		mean_y+=i->Y();
+		mean_cos=cos(i->Yaw());
+		mean_sin=sin(i->Yaw());
+	}
+
+	// mean
+	auto sz(pars.size());
+	mean_sin/=sz;
+	mean_cos/=sz;
+	mean=make_unique<const PoseBase>(mean_x/sz,mean_y/sz,atan2(mean_sin,mean_cos));
+
+	// std
+	Matrix2f std_xy;
+	f32 sxx(0),sxy(0),syy(0),stheta(0);
+	for(auto&i:pars){
+		f32 dx(i->X()-mean->X());
+		f32 dy(i->Y()-mean->Y());
+		sxx+= pow(dx,2);
+		sxy= dx*dy;
+		syy=pow(dy,2);
+
+		f32 dh(i->Yaw()-mean->Yaw()+M_PI);
+		dh=fmod(dh,2*M_PI);
+		dh-=M_PI;
+		stheta+= pow(dh,2);
+	}
+	sxx/=(sz-1);
+	syy/=(sz-1);
+	sxy/=(sz-1);
+	stheta/=(sz-1);
+        std_xy << sxx,sxy,sxy,syy;
+        SelfAdjointEigenSolver<MatrixXf> eigensolver(std_xy);
+        auto eigenvals=eigensolver.eigenvalues();
+        auto eigenvecs=eigensolver.eigenvectors();
+        f32 x(sqrt(eigenvals(1)));
+        f32 y(sqrt(eigenvals(0)));
+        f32 xy_angle(atan2(eigenvecs(1,1),eigenvecs(0,1)));
+        f32 theta(sqrt(stheta));
+        std=make_tuple(xy_angle,x,y,theta);
 }
 
 PfOutput::PfOutput(const PfOutput& rhs){
@@ -18,6 +61,8 @@ PfOutput::PfOutput(const PfOutput& rhs){
 	for(auto& i:rhs.particles){
                 particles.push_back(make_unique<PoseBase>(*i));
         }
+	mean=make_unique<const PoseBase>(*rhs.mean);
+	std=rhs.std;
 }
 
 pair<f32,f32> ParticleFilter::Compute_SigmaCtrl(

@@ -53,6 +53,8 @@ class PfOutput{
 public:
 	ConstUnqPtrVec<PoseBase> particles;
 	unique_ptr<const Robot::RobotConfig> cfg;
+	unique_ptr<const PoseBase> mean;
+	tuple<f32,f32,f32,f32> std;
 	PfOutput()=delete;
 	PfOutput(
 		const SmrtPtrVec<PoseBase>& pars,
@@ -60,7 +62,9 @@ public:
 	PfOutput(const PfOutput& rhs);
 	PfOutput(PfOutput&& rhs):
 		particles(move(rhs.particles)),
-		cfg(move(rhs.cfg)){}
-	
+		cfg(move(rhs.cfg)),
+		mean(move(rhs.mean)),
+		std(move(rhs.std)){}
+			
 };
 #endif
