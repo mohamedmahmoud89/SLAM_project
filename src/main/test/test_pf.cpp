@@ -4,7 +4,7 @@
 #include "lfx.h"
 #include "feat.h"
 #include "test.h"
-#include "pf.h"
+#include "loc.h"
 #include<random>
 
 using namespace std;
@@ -46,7 +46,7 @@ void Test::Test_Pf(){
 		f32 yaw(dist_yaw(gen));
 		vec.push_back(make_shared<PoseBase>(x,y,yaw));
 	}
-	ParticleFilter pf(
+	LocPF pf(
 			vec,
 			control_motion,
 			control_turn,

@@ -9,7 +9,7 @@
 #include"scan.h"
 #include"feat.h"
 #include "ekf.h"
-#include "pf.h"
+#include "slam.h"
 using namespace std;
 using namespace Feature;
 template<typename T>
@@ -106,5 +106,14 @@ class PfFileMgr : public WriteFileMgr<PfOutput>{
 public:
 	PfFileMgr()=default;
 	PfFileMgr(const u16 size):WriteFileMgr(size){}
+};
+
+class FastSlamFileMgr : public WriteFileMgr<FastSlamOutput>{
+	void write_line(
+			ofstream& ofs,
+			const FastSlamOutput& out) const override;
+public:
+	FastSlamFileMgr()=default;
+	FastSlamFileMgr(const u16 size):WriteFileMgr(size){}
 };
 #endif

@@ -13,8 +13,11 @@ int main(){
 	//Test_Klmn();
 	
 	
-	// KLMN test
-	Test_Pf();
+	// PF test
+	//Test_Pf();
+	
+	// Fast Slam test
+	Test_FastSlam();
 	return 0;
 }
 
