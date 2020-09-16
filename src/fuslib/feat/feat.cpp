@@ -94,6 +94,8 @@ vector<FeatBase> Feature::ExtractRefFeatures(
 f32 Feature::MaxLikeFeatAssociate(
                 const shared_ptr<PoseBase>& particle,
                 const shared_ptr<FeatBase>& feature,
-                const shared_ptr<Gaussian<PoseBase>>& landmark){
+                const shared_ptr<Gaussian<PoseBase>>& landmark,
+		const f32 meas_dst_std,
+		const f32 meas_ang_std){
 	return 1.0;
 }

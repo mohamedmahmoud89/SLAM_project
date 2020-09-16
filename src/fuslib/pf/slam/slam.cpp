@@ -20,7 +20,9 @@ vector<f32> FastSlamPF::Calc_ImpWeights(
 					MaxLikeFeatAssociate(
 						particles[i],
 						feat,
-						map[i][j]));
+						map[i][j],
+						meas_dst_std,
+						meas_ang_std));
 			}
 
 			// obtain the max likelihood idx
