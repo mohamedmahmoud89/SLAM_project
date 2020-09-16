@@ -27,16 +27,18 @@ void Test::Test_FastSlam(){
 	u16 num_particles(25);
 	SmrtPtrVec<PoseBase>vec;
 
-	// random engine
 	for(u16 i=0;i<num_particles;++i){
 		vec.push_back(make_shared<PoseBase>(500.0,0.0,(45.0/180.0)*M_PI));
 	}
+	
+	f32 min_likelihood(0.001);
 	FastSlamPF pf(
 			vec,
 			control_motion,
 			control_turn,
 			meas_dist_std,
-			meas_ang_std);
+			meas_ang_std,
+			min_likelihood);
 	
 	
 	// output file Mgr

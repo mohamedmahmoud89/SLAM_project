@@ -90,3 +90,10 @@ vector<FeatBase> Feature::ExtractRefFeatures(
 	}
 	return ret;
 }
+
+f32 Feature::MaxLikeFeatAssociate(
+                const shared_ptr<PoseBase>& particle,
+                const shared_ptr<FeatBase>& feature,
+                const shared_ptr<Gaussian<PoseBase>>& landmark){
+	return 1.0;
+}

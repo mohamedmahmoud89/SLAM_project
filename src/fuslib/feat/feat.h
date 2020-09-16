@@ -89,6 +89,10 @@ void FeatureGlobalTransform(
 		const Robot::Config& cfg);
 
 vector<FeatBase> ExtractRefFeatures(const FeatAssoc& assocs);
-};
 
+f32 MaxLikeFeatAssociate(
+		const shared_ptr<PoseBase>& particle,
+		const shared_ptr<FeatBase>& feature,
+		const shared_ptr<Gaussian<PoseBase>>& landmark);
+};
 #endif
