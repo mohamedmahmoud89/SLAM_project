@@ -140,7 +140,7 @@ f32 Feature::MaxLikeFeatAssociate(
 	delta_z(1)=feature->Theta()-proposed_meas.Theta();
 	delta_z(1)+=M_PI;
         delta_z(1)=fmod(delta_z(1),2*M_PI);
-        theta-=M_PI;
+        delta_z(1)-=M_PI;
 
 	// calc the pdf N(delta_z,0,Cov)
 	ret=(1.0f/(sqrt(2*M_PI*Cov.determinant())))*

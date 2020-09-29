@@ -83,7 +83,43 @@ void FastSlamPF::Update_Landmark(
 		const shared_ptr<FeatBase>& feature,
 		int landmark_idx,
 		const Config& cfg){
+	// get old Mu and Var
+	VectorXf Mu(2);
+	Mu(0)=map[particle_idx][landmark_idx]->Mean()->X();
+	Mu(1)=map[particle_idx][landmark_idx]->Mean()->Y();
+	MatrixXf Var(*map[particle_idx][landmark_idx]->Covariance());
+	
+	// Q is the measurement variance
+        MatrixXf Q(Compute_Q());
 
+        // H is the jaccobian
+        MatrixXf H(Compute_H(*particles[particle_idx],*feature,cfg));	
+	
+	// calculate kalman gain
+	MatrixXf K(Var*H.transpose());
+	K*=(H*Var*H.transpose()+Q).inverse();
+
+	// innovation
+	FeatBase proposed_meas;
+	proposed_meas.Set_GX(map[particle_idx][landmark_idx]->Mean()->X());
+        proposed_meas.Set_GY(map[particle_idx][landmark_idx]->Mean()->Y());
+        FeaturePolarTransform(proposed_meas,*particles[particle_idx],cfg);
+	
+	VectorXf dz(2);
+        dz(0)=feature->R()-proposed_meas.R();
+        dz(1)=feature->Theta()-proposed_meas.Theta();
+        dz(1)+=M_PI;
+        dz(1)=fmod(dz(1),2*M_PI);
+        dz(1)-=M_PI;
+
+	Mu=Mu+K*dz;
+
+	MatrixXf I(MatrixXf::Identity(2,2));
+	Var=(I-(K*H))*Var;
+
+	map[particle_idx][landmark_idx]->Mean()->set_x(Mu(0));
+	map[particle_idx][landmark_idx]->Mean()->set_y(Mu(1));
+	*map[particle_idx][landmark_idx]->Covariance()=Var;
 }
 
 void FastSlamPF::Insert_Landmark(
