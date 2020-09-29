@@ -95,7 +95,56 @@ f32 Feature::MaxLikeFeatAssociate(
                 const shared_ptr<PoseBase>& particle,
                 const shared_ptr<FeatBase>& feature,
                 const shared_ptr<Gaussian<PoseBase>>& landmark,
+		const Config& cfg,
 		const f32 meas_dst_std,
 		const f32 meas_ang_std){
-	return 1.0;
+	float ret(0);
+	// the likelihood is the pdf function N(z-z_proposed, 0, SIGMA_SQ)
+	// implement the reverse measurement function h_rev() to calc z_proposed
+	FeatBase proposed_meas;
+	proposed_meas.Set_GX(landmark->Mean()->X());	
+	proposed_meas.Set_GY(landmark->Mean()->Y());
+	FeaturePolarTransform(proposed_meas,*particle,cfg);
+	
+	// H is the jacobian of the inverse measurement function h_rev() with respect to the landmark
+	MatrixXf H(2,2);
+	f32 d(cfg.Sensor_Offset());
+        f32 r(proposed_meas.R());
+        f32 theta(particle->Yaw());
+        f32 scanner_x(
+                particle->X()+(d*cos(theta)));
+        f32 scanner_y(
+                particle->Y()+(d*sin(theta)));
+        f32 dx(proposed_meas.GX()-scanner_x);
+        f32 dy(proposed_meas.GY()-scanner_y);
+        H(0,0)=dx/r;
+        H(0,1)=dy/r;
+        H(1,0)=(-dy)/pow(r,2);
+        H(1,1)=dx/pow(r,2);
+	
+	// Q is the measurement variance
+	MatrixXf Q(2,2);
+	Q(0,0)=pow(meas_dst_std,2);
+	Q(0,1)=0;
+	Q(1,0)=0;
+	Q(1,1)=pow(meas_ang_std,2);
+
+	// implement the variance propagation to calc the SIGMA_SQ = H*SIGMA*H_transpose + Q
+	MatrixXf Cov(2,2);
+	Cov = H*(*landmark->Covariance())*H.transpose();
+	Cov+=Q;
+
+	// calculate z-z_proposed
+	VectorXf delta_z(2);
+	delta_z(0)=feature->R()-proposed_meas.R();
+	delta_z(1)=feature->Theta()-proposed_meas.Theta();
+	delta_z(1)+=M_PI;
+        delta_z(1)=fmod(delta_z(1),2*M_PI);
+        theta-=M_PI;
+
+	// calc the pdf N(delta_z,0,Cov)
+	ret=(1.0f/(sqrt(2*M_PI*Cov.determinant())))*
+		exp(-0.5f*delta_z.transpose()*Cov.inverse()*delta_z);
+
+	return ret;
 }

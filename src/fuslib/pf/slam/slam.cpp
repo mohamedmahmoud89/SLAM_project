@@ -21,6 +21,7 @@ vector<f32> FastSlamPF::Calc_ImpWeights(
 						particles[i],
 						feat,
 						map[i][j],
+						cfg,
 						meas_dst_std,
 						meas_ang_std));
 			}
@@ -33,10 +34,10 @@ vector<f32> FastSlamPF::Calc_ImpWeights(
 
 			// check to either add a new landmark or update an existing
 			if(*it>min_likelihood){
-				Update_Landmark(feat,it-likelihood.begin());
+				Update_Landmark(i,feat,it-likelihood.begin(),cfg);
 			}
 			else{
-				Insert_Landmark(feat);
+				Insert_Landmark(i,feat,cfg);
 			}
                 }
                 ret.push_back(weight);
@@ -44,10 +45,65 @@ vector<f32> FastSlamPF::Calc_ImpWeights(
         return ret;
 }
 
-void FastSlamPF::Update_Landmark(const shared_ptr<FeatBase>& feature,int idx){
+MatrixXf FastSlamPF::Compute_H(
+               const PoseBase& pos,
+               const FeatBase& landmark,
+               const Robot::Config& cfg){
+	MatrixXf H(2,2);
+        f32 d(cfg.Sensor_Offset());
+        f32 r(landmark.R());
+        f32 theta(pos.Yaw());
+        f32 scanner_x(
+                pos.X()+(d*cos(theta)));
+        f32 scanner_y(
+                pos.Y()+(d*sin(theta)));
+        f32 dx(landmark.GX()-scanner_x);
+        f32 dy(landmark.GY()-scanner_y);
+        H(0,0)=dx/r;
+        H(0,1)=dy/r;
+        H(1,0)=(-dy)/pow(r,2);
+        H(1,1)=dx/pow(r,2);
+
+	return H;
+}
+
+MatrixXf FastSlamPF::Compute_Q(){
+	MatrixXf Q(2,2);
+        Q(0,0)=pow(meas_dst_std,2);
+        Q(0,1)=0;
+        Q(1,0)=0;
+        Q(1,1)=pow(meas_ang_std,2);
+
+	return Q;
+}
+
+
+void FastSlamPF::Update_Landmark(
+		const size_t particle_idx,
+		const shared_ptr<FeatBase>& feature,
+		int landmark_idx,
+		const Config& cfg){
 
 }
 
-void FastSlamPF::Insert_Landmark(const shared_ptr<FeatBase>& feature){
+void FastSlamPF::Insert_Landmark(
+		const size_t particle_idx,
+		const shared_ptr<FeatBase>& feature,
+		const Config& cfg){
+	FeatureGlobalTransform(*feature,*particles[particle_idx],cfg);
 
+        // Mean = feature->GX(), feature->GY()
+        PoseBase mean(feature->GX(), feature->GY(),0);
+
+	// Q is the measurement variance
+        MatrixXf Q(Compute_Q());
+
+	// H is the jaccobian
+	MatrixXf H(Compute_H(*particles[particle_idx],*feature,cfg));
+
+	// Cov = H.inverse()*Q*H.inverse().transpose()
+	MatrixXf Cov(H.inverse()*Q*H.inverse().transpose());
+
+	// add a gaussian to the particle's landmarks vector
+	map[particle_idx].push_back(make_shared<Gaussian<PoseBase>>(mean,Cov));
 }

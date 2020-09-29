@@ -94,6 +94,7 @@ f32 MaxLikeFeatAssociate(
 		const shared_ptr<PoseBase>& particle,
 		const shared_ptr<FeatBase>& feature,
 		const shared_ptr<Gaussian<PoseBase>>& landmark,
+		const Robot::Config& cfg,
 		const f32 meas_dst_std,
 		const f32 meas_ang_std);
 };
