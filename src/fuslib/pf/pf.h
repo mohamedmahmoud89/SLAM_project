@@ -40,7 +40,7 @@ protected:
 	pair<f32,f32> Compute_SigmaCtrl(
                         const ControlBase& ctrl,
                         const Robot::Config& cfg);
-	void Resample(const vector<f32>& weights);
+	virtual void Resample(const vector<f32>& weights);
 };
 
 class PfOutput{

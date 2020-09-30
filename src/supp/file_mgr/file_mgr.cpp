@@ -202,5 +202,18 @@ void FastSlamFileMgr::write_line(
         ofs<<get<2>(out.std)<<" ";
         ofs<<get<3>(out.std);
         ofs<<endl;
+	ofs<<"W C ";
+	for(auto& i:out.landmarks[out.chosen_particle_idx]){
+		ofs<<i->Mean()->X()<<" ";
+		ofs<<i->Mean()->Y()<<" ";
+	}
+	ofs<<endl;
+	ofs<<"W E ";
+       	for(auto& ee:out.landmarks_error_ellipses){
+		ofs<<get<0>(ee)<<" ";
+		ofs<<get<1>(ee)<<" ";
+		ofs<<get<2>(ee)<<" ";
+	}
+        ofs<<endl;
 }
 

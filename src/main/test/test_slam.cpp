@@ -22,13 +22,14 @@ void Test::Test_FastSlam(){
 	RobotConfig cfg(155.0,30.0,0.349);
         f32 control_motion(0.35);
         f32 control_turn(0.6);
-        f32 meas_dist_std(200);
+        f32 meas_dist_std(100);
         f32 meas_ang_std((15.0/180.0)*M_PI);
-	u16 num_particles(25);
+	u16 num_particles(200);
 	SmrtPtrVec<PoseBase>vec;
 
 	for(u16 i=0;i<num_particles;++i){
-		vec.push_back(make_shared<PoseBase>(500.0,0.0,(45.0/180.0)*M_PI));
+		//vec.push_back(make_shared<PoseBase>(500.0,0.0,(45.0/180.0)*M_PI));
+		vec.push_back(make_shared<PoseBase>(1850.0,1897.0,(213.0/180)*M_PI));
 	}
 	
 	f32 min_likelihood(0.001);
@@ -53,19 +54,19 @@ void Test::Test_FastSlam(){
 
         // pf loop
 	for(int i=0;i<ticks.size();++i){
-		//if(ticks[i].Right_Tick()!=0&&ticks[i].Left_Tick()!=0)
+		if(ticks[i].Right_Tick()!=0&&ticks[i].Left_Tick()!=0)
 		{
 			// predict
 			pf.Predict(ticks[i],cfg);
 			
 			// update
-			/*FeatList feats(plfx->Feature_Extract(
+			FeatList feats(plfx->Feature_Extract(
 					scans[i],s_cfg));
 
-			pf.Update(feats,cfg);*/
+			pf.Update(feats,cfg);
 		}
 		//store outputs
-		pfm->add_sample(FastSlamOutput(pf.Particles(),cfg));	
+		pfm->add_sample(FastSlamOutput(pf.Map(),pf.Particles(),cfg));	
 	
 	}
 	// write output file

@@ -29,20 +29,46 @@ vector<f32> FastSlamPF::Calc_ImpWeights(
 			// obtain the max likelihood idx
 			auto it=max_element(likelihood.begin(),likelihood.end());
 			
-			// update weight
-			weight*= *it;
-
 			// check to either add a new landmark or update an existing
-			if(*it>min_likelihood){
+			if(it!=likelihood.end()&&*it>min_likelihood){
+				// update weight
+				weight*= *it;
+				// update landmark
 				Update_Landmark(i,feat,it-likelihood.begin(),cfg);
 			}
 			else{
+				weight*=min_likelihood;
 				Insert_Landmark(i,feat,cfg);
 			}
                 }
                 ret.push_back(weight);
         }
         return ret;
+}
+
+void FastSlamPF::Resample(const vector<f32>& weights){
+        SmrtPtrVec<PoseBase>resampled;
+	vector<SmrtPtrVec<Gaussian<PoseBase>>>resampled_lmks;
+	u16 N(particles.size());
+        u16 idx(rand()%N);
+        f32 beta(0);
+        f32 mw(*max_element(weights.begin(),weights.end()));
+
+        for(u16 i=0;i<N;++i){
+                f32 random_num(static_cast<f32>(rand())/RAND_MAX);
+                beta=(random_num*2*mw);
+                while(beta>weights[idx]){
+                        beta-=weights[idx];
+                        idx=(idx+1)%N;
+                }
+                // sample new particles around the one of chosen index
+                resampled.push_back(make_shared<PoseBase>(*particles[idx]));
+		resampled_lmks.push_back(SmrtPtrVec<Gaussian<PoseBase>>(map[idx]));
+        }
+        particles.clear();
+        particles=move(resampled);
+	map.clear();
+	map=move(resampled_lmks);
 }
 
 MatrixXf FastSlamPF::Compute_H(
@@ -108,9 +134,9 @@ void FastSlamPF::Update_Landmark(
 	VectorXf dz(2);
         dz(0)=feature->R()-proposed_meas.R();
         dz(1)=feature->Theta()-proposed_meas.Theta();
-        dz(1)+=M_PI;
-        dz(1)=fmod(dz(1),2*M_PI);
-        dz(1)-=M_PI;
+        //dz(1)+=M_PI;
+        //dz(1)=fmod(dz(1),2*M_PI);
+        //dz(1)-=M_PI;
 
 	Mu=Mu+K*dz;
 
@@ -142,4 +168,45 @@ void FastSlamPF::Insert_Landmark(
 
 	// add a gaussian to the particle's landmarks vector
 	map[particle_idx].push_back(make_shared<Gaussian<PoseBase>>(mean,Cov));
+}
+
+FastSlamOutput::FastSlamOutput(
+		const vector<SmrtPtrVec<Gaussian<PoseBase>>>& lmks,
+		const SmrtPtrVec<PoseBase>& pars,
+		const RobotConfig& cfg)
+	:PfOutput(pars,cfg){
+	// copy the landmarks of the chosen particle
+	auto copy_lmda=[this](const SmrtPtrVec<Gaussian<PoseBase>>& vec){
+		this->landmarks.push_back(SmrtPtrVec<Gaussian<PoseBase>>(vec));
+	};
+	for_each(lmks.begin(),lmks.end(),copy_lmda);
+	// the chosen particle
+	auto lmda=[this](
+			const unique_ptr<const PoseBase>&p1,
+			const unique_ptr<const PoseBase>&p2)
+	{
+		Vector3f v1{
+			p1->X()-this->mean->X(),
+			p1->Y()-this->mean->Y(),
+			p1->Yaw()-this->mean->Yaw()};
+		Vector3f v2{
+			p2->X()-this->mean->X(),
+			p2->Y()-this->mean->Y(),
+			p2->Yaw()-this->mean->Yaw()};
+		return v1.norm()<v2.norm();
+	};
+	chosen_particle_idx=min_element(particles.begin(),particles.end(),lmda) - particles.begin();
+	/*auto it=min_element(particles.begin(),particles.end(),lmda);
+	chosen_particle_idx=it-particles.begin();*/
+	assert(chosen_particle_idx<particles.size());
+	// the chosen particles' landmarks error ellipse
+	for(auto& l:lmks[chosen_particle_idx]){
+		SelfAdjointEigenSolver<MatrixXf> eigensolver(*l->Covariance());
+		auto eigenvals=eigensolver.eigenvalues();
+		auto eigenvecs=eigensolver.eigenvectors();
+		f32 x(sqrt(eigenvals(0)));
+		f32 y(sqrt(eigenvals(1)));
+		f32 xy_angle(atan2(eigenvecs(1,0),eigenvecs(0,0)));
+		landmarks_error_ellipses.push_back(make_tuple(xy_angle,x,y));
+	}
 }

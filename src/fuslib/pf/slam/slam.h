@@ -34,10 +34,12 @@ public:
         void Update(
                 FeatList& feats,
                 const Robot::Config& cfg);
+	const vector<SmrtPtrVec<Gaussian<PoseBase>>>& Map(){return map;}
 private:
         vector<f32> Calc_ImpWeights(
                         FeatList& feats,
                         const Robot::Config& cfg);
+	void Resample(const vector<f32>& weights) override;
 	void Update_Landmark(
 			const size_t particle_idx,
 			const shared_ptr<FeatBase>& feature,
@@ -56,12 +58,24 @@ private:
 
 class FastSlamOutput : public PfOutput{
 public:
+	vector<SmrtPtrVec<Gaussian<PoseBase>>> landmarks;
+	size_t chosen_particle_idx{0};
+	vector<tuple<f32,f32,f32>>landmarks_error_ellipses;
 	FastSlamOutput()=delete;
 	FastSlamOutput(
-			const SmrtPtrVec<PoseBase>& pars,
-			const RobotConfig& cfg):PfOutput(pars,cfg){}
-	FastSlamOutput(const FastSlamOutput& rhs):PfOutput(rhs){}
-	FastSlamOutput(FastSlamOutput&& rhs):PfOutput(move(rhs)){}
+                const vector<SmrtPtrVec<Gaussian<PoseBase>>>& lmks,
+                const SmrtPtrVec<PoseBase>& pars,
+                const RobotConfig& cfg);
+	FastSlamOutput(const FastSlamOutput& rhs):
+		landmarks(rhs.landmarks),
+		chosen_particle_idx(rhs.chosen_particle_idx),
+                landmarks_error_ellipses(rhs.landmarks_error_ellipses),
+		PfOutput(rhs){}
+	FastSlamOutput(FastSlamOutput&& rhs):
+		landmarks(move(rhs.landmarks)),
+		chosen_particle_idx(rhs.chosen_particle_idx),
+		landmarks_error_ellipses(move(rhs.landmarks_error_ellipses)),
+		PfOutput(move(rhs)){}
 };
 #endif
 
